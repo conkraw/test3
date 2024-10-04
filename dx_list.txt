@@ -1,0 +1,835 @@
+Abdominal hernia
+Abdominal pain
+Abdominal rigidity
+Abdominal swelling, mass or lump
+Abnormal involuntary movements
+Accessory auricle
+Achlorhydria
+Acquired foot deformities
+Acute and unspecified renal failure
+Acute appendicitis w/o peritonitis
+Acute appendicitis with peritonitis
+Acute bronchiolitis
+Acute bronchitis
+Acute epiglottitis
+Acute erythroid leukemia
+Acute lymphoid leukemia in relapse
+Acute lymphoid leukemia in remission
+Acute lymphoid leukemia w/o remission
+Acute megakaryoblastic leukemia
+Acute myeloid leukemia in relapse
+Acute myeloid leukemia in remission
+Acute myeloid leukemia w/o remission
+Acute myocardial infarction
+Acute nephritic syndrome
+Acute or chronic duodenal ulcer
+Acute or chronic gastric ulcer
+Acute or chronic gastrojejunal ulcer
+Acute or chronic peptic ulcer
+Acute or chronic slipped upper femoral epiphysis
+Acute pancreatitis
+Acute panmyelosis
+Acute posthemorrhagic anemia
+Acute respiratory failure (post-surgical)
+Acute sinusitis
+Acute tracheitis
+Acute upper respiratory infection
+Adjustment disorders
+Administrative/social admission
+Adult forced labor exploitation
+Adult forced sexual exploitation
+Adult maltreatment
+Adult neglect or abandonment
+Adult physical abuse
+Adult psychological abuse
+Adult sexual abuse
+Adult t-cell lymphoma/leukemia
+Adverse effects of medical care
+Adverse effects of medical drugs
+Agenesis, hypoplasia, and dysplasia of lung, congenital
+Alcohol-related disorders
+Allergic purpura
+Allergic reactions
+Allergic rhinitis
+Anal and rectal conditions
+Anal and rectal fissure
+Anal and rectal fistula
+Anemia unspecified
+Anomalies of cerebrovascular system, congenital
+Anomalies of diaphragm, congenital
+Anomalies of foot, congenital
+Anomalies of intestinal fixation, congenital
+Anomalies of other endocrine glands, congenital
+Anomalies of peripheral vascular system
+Anorexia nervosa
+Anxiety disorders
+Aortic and peripheral arterial embolism or thrombosis
+Aortic valve disorders/insufficiency
+Aortic; peripheral; and visceral artery aneurysms
+Aplastic anemia
+Apnea
+Appendicitis and other appendiceal conditions
+Aspiration pneumonitis; food/vomitus
+Asthma
+Atelectasis of newborn
+Atresia and stenosis of large intestine, rectum, and anal canal, congenital
+Atresia and stenosis of small intestine, congenital
+Atresia of pulmonary valve, congenital
+Atresia/stenosis of urethra and bladder neck, congenital
+Atrial fibrillation
+Atrial flutter
+Atrophy of testis
+Attention to colostomy
+Attention to gastrostomy
+Attention to ileostomy
+Attention to tracheostomy
+Attention-deficit hyperactivity disorder
+Autistic disorder
+Bacteremia
+Bacterial infection; unspecified site
+Bacterial meningitis
+Barrett's esophagus w or w/o dysplasia
+Benign intracranial hypertension
+Benign neoplasm of bones of scalp and skin of neck
+Benign neoplasm of bones of skull or face
+Benign neoplasm of brain
+Benign neoplasm of colon
+Benign neoplasm of connective and other soft tissue of head, face, and neck, other
+Benign neoplasm of larynx
+Benign neoplasm of long bones
+Benign neoplasm of skin of lower limb, including hip
+Benign neoplasm of skin of other and unspecified parts of face
+Benign neoplasm of skin of trunk, except scrotum
+Benign neoplasm of skin of upper limb, including shoulder
+Benign neoplasm of uterus
+Biliary atresia, congenital
+Biliary tract disease
+Birth trauma
+Blindness and vision defects
+Bone marrow transplant complications
+Branchial cleft cyst
+Bronchiectasis
+Bronchitis, not specified as acute or chronic
+Bronchopulmonary dysplasia
+Bulbus cordis anomalies and anomalies of cardiac septal closure, other
+Bulimia nervosa
+Buphthalmos, unspecified
+Burn < 10% body surface and 3rd degree <10%
+Burns
+COPD
+Calculus of bile duct
+Calculus of gallbladder
+Calculus of gallbladder & bile duct
+Calculus of kidney
+Calculus of ureter
+Calculus of urinary tract
+Cancer of bladder
+Cancer of bone and connective tissue
+Cancer of brain and nervous system
+Cancer of breast
+Cancer of bronchus; lung
+Cancer of cervix
+Cancer of colon
+Cancer of esophagus
+Cancer of head and neck
+Cancer of kidney and renal pelvis
+Cancer of liver and intrahepatic bile duct
+Cancer of other GI organs; peritoneum
+Cancer of other female genital organs
+Cancer of other male genital organs
+Cancer of other urinary organs
+Cancer of ovary
+Cancer of pancreas
+Cancer of prostate
+Cancer of rectum and anus
+Cancer of stomach
+Cancer of testis
+Cancer of thyroid
+Cancer of uterus
+Cancer; other and unspecified primary
+Cancer; other respiratory and intrathoracic
+Cardiac and circulatory congenital anomalies
+Cardiac arrest and ventricular fibrillation
+Cardiac depolarization
+Cardiac dysrhythmias
+Cardiac murmurs
+Cataract
+Celiac disease
+Cellulitis
+Cerebral cysts
+Cerebral infarction
+Cerebral palsy
+Chalazion
+Chemotherapy
+Child forced labor exploitation
+Child forced sexual exploitation
+Child maltreatment
+Child neglect or abandonment
+Child physical abuse
+Child psychological abuse
+Child sexual abuse
+Choanal atresia
+Cholangitis
+Cholecystitis
+Cholelithiasis, other
+Cholesteatoma
+Chronic bronchitis
+Chronic kidney disease
+Chronic lymphocytic leukemia
+Chronic myeloid leukemia in relapse
+Chronic myeloid leukemia in remission
+Chronic myeloid leukemia w/o remission
+Chronic nephritic syndrome
+Chronic pancreatitis
+Chronic sinusitis
+Chronic ulcer of skin
+Circumcision
+Cirrhosis of liver
+Cleft lip and palate
+Clostridium difficile infection
+Coagulation and hemorrhagic disorders
+Coarctation of aorta or interrupted aortic arch
+Colostomy and enterostomy complication
+Coma; stupor; and brain damage
+Combined immunity deficiency
+Common cold
+Common ventricle
+Complex febrile convulsions
+Complication of device; implant or graft
+Complications due to heart valve prosthesis
+Complications due to other internal orthopedic device, implant, and graft
+Complications of surgical procedures or medical care
+Complications of transplanted liver
+Compression of brain
+Concussion w or w/o loss of consciousness
+Conditions associated with dizziness or vertigo
+Conduct disorder
+Conduction disorders
+Congenital and developmental myasthenia
+Congenital anomalies of abdominal wall, other
+Congenital anomalies of aortic arch
+Congenital anomalies of esophagus
+Congenital anomalies of intestine
+Congenital anomalies of larynx, trachea, and bronchus, other
+Congenital anomalies of lips
+Congenital anomalies of liver & bile ducts
+Congenital anomalies of mouth
+Congenital anomalies of palate
+Congenital anomalies of pharynx
+Congenital anomalies of pulmonary artery
+Congenital anomalies of salivary glands and ducts
+Congenital anomalies of skull and face bones
+Congenital anomalies of tongue
+Congenital cataract, unspecified
+Congenital chordee
+Congenital deformity of hip (joint)
+Congenital dislocation of hip
+Congenital heart block
+Congenital hiatus hernia
+Congenital hydrocele
+Congenital hydrocephalus
+Congenital hypertrophic pyloric stenosis
+Congenital hypothyroidism
+Congenital iodine-deficiency
+Congenital laryngomalacia
+Congenital malform of cardiac chambers and connections
+Congenital malformation of aortic and mitral valves
+Congenital malformation of cardiac septum
+Congenital malformation of great arteries
+Congenital malformation of great vein
+Congenital malformation of heart
+Congenital malformation of tricuspid valve
+Congenital mitral stenosis
+Congenital musculoskeletal deformities of spine
+Congenital myopathies
+Congenital polycystic kidney (infantile)
+Congenital ptosis of eyelid
+Congenital stenosis pulmonary
+Congenital subaortic stenosis
+Congenital subglottic stenosis
+Congenital talipes equinovarus
+Congestive heart failure; nonhypertensive
+Conjoined twins
+Constipation
+Contraceptive and procreative management
+Conversion disorder
+Convulsions in newborn
+Coronary artery anomaly, congenital
+Coronary atherosclerosis and other heart disease
+Corrected transposition of great vessels
+Cough
+Crohn's disease
+Croup
+Crushing injury or internal injury
+Crying or fussy baby
+Cyanosis
+Cyanotic attacks of newborn
+Cystic fibrosis
+Cystic lung, congenital
+Deficiency and other anemia
+Dehydration
+Delirium dementia and amnestic and other cognitive disorders
+Dental caries
+Dermatopolymyositis
+Developmental disorders
+Deviated nasal septum
+Diabetes mellitus with complications
+Diabetes mellitus without complication
+Diabetes or abnormal glucose tolerance complicating pregnancy; childbirth; or the puerperium
+Diabetic ketoacidosis
+Diaphragmatic hernia
+Diarrhea
+Digestive congenital anomalies
+Diphtheria
+Disease of pericardium, unspecified
+Diseases of lips
+Diseases of mouth; excluding dental
+Diseases of white blood cells
+Disorders of lipid metabolism
+Disorders of mitochondrial metabolism
+Disorders of penis
+Disorders of teeth and jaw
+Disorders of urea cycle metabolism
+Disorders usually diagnosed in infancy childhood or adolescence
+Disruption external operation wound
+Disruptive behavior disorder
+Disseminated candidiasis
+Disturbances of temperature regulation of newborn, other
+Diverticulosis and diverticulitis
+Down syndrome
+Drowning and nonfatal submersion
+Drug withdrawal syndrome in newborn
+Dysphagia
+Dyspnea
+Early or threatened labor
+Ebstein's anomaly
+Ectopic pregnancy
+Ectopic testes
+Emphysema
+Empyema/pyothorax
+Encephalitis (except that caused by tuberculosis or sexually transmitted disease)
+Encephalocele
+Encounter for removal of internal fixation device
+Encounter for removal of suture
+Endocardial cushion defects, other
+Endocarditis
+Endometriosis
+Enlargement of lymph nodes
+Eosinophilic esophagitis
+Epilepsy; convulsions
+Epistaxis
+Erythema multiforme
+Esophageal disorders
+Esophageal varices
+Essential fatty acid [EFA] deficiency
+Essential hypertension
+External cause codes:  cut/pierce
+External cause codes:  drowning/submersion
+External cause codes:  fall
+External cause codes:  fire/burn
+External cause codes:  firearm
+External cause codes:  machinery
+External cause codes:  motor vehicle traffic (MVT)
+External cause codes:  natural/environment
+External cause codes:  other specified and classifiable
+External cause codes:  other specified; NEC
+External cause codes:  overexertion
+External cause codes:  pedal cyclist; not MVT
+External cause codes:  pedestrian; not MVT
+External cause codes:  place of occurrence
+External cause codes:  poisoning
+External cause codes:  struck by; against
+External cause codes:  suffocation
+External cause codes:  transport; not MVT
+External cause codes:  unspecified
+Extreme immaturity 1000-1249 grams
+Extreme immaturity 500-749 grams
+Extreme immaturity 750-999 grams
+Extreme immaturity <500 grams
+Extreme immaturity of newborn
+Failure to thrive
+Feeding difficulties and mismanagement
+Female infertility
+Fetal alcohol spectrum disorder
+Fetal distress and abnormal forces of labor
+Fetopelvic disproportion; obstruction
+Fever of unknown origin
+Fitting and adjustment of urinary devices
+Fitting and adjustment of vascular catheter
+Fluid and electrolyte disorders
+Forceps delivery
+Foreign body in alimentary tract
+Foreign body in bronchus
+Foreign body in ear
+Foreign body in eye
+Foreign body in genito-urinary tract
+Foreign body in larynx
+Foreign body in nose
+Foreign body in pharynx
+Foreign body in respiratory tract
+Foreign body in trachea
+Fracture of lower limb
+Fracture of neck of femur (hip)
+Fracture of upper limb
+Functional disorders of intestines
+Gallstone ileus
+Gangrene
+Gastric varices
+Gastritis, gastroduodenitis, w/o hemorrhage
+Gastritis, gastroduodenitis, with hemorrhage
+Gastroduodenal ulcer (except hemorrhage)
+Gastroenteritis and colitis, allergic
+Gastroenteritis and colitis, noninfectious
+Gastroenteritis, infectious
+Gastroesophageal reflux and esophagitis
+Gastrointestinal hemorrhage
+Gastroschisis & exomphalos
+Genitourinary congenital anomalies
+Genitourinary symptoms and ill-defined conditions
+Glaucoma
+Gout and other crystal arthropathies
+Grey baby syndrome
+Guillain-Barre syndrome
+HIV infection
+Hairy cell leukemia
+Head injury, unspecified
+Headache; including migraine
+Hearing loss
+Heart transplant complications
+Heart valve disorders
+Hemangioma
+Hematemesis
+Hematuria
+Hemolytic disease due to ABO
+Hemolytic jaundice and perinatal jaundice
+Hemolytic-uremic syndrome
+Hemophagocytic syndrome
+Hemorrhage during pregnancy; abruptio placenta; placenta previa
+Hemorrhage of rectum and anus
+Hemorrhagic disease of newborn
+Hemorrhoids
+Hepatitis
+Hereditary factor deficiency
+Hereditary nephropathy
+Hereditary spherocytosis
+Hidden penis
+Hirschsprung's disease and other congenital functional disorders of colon
+Hodgkin`s disease
+Hydrocephalus
+Hydronephrosis
+Hydrops fetalis not due to isoimmunization
+Hyperosmolality and/or hypernatremia
+Hyperplasia of prostate
+Hypertension complicating pregnancy; childbirth and the puerperium
+Hypertension with complications and secondary hypertension
+Hypertrophic pyloric stenosis (adult)
+Hypertrophic scar/keloid scar
+Hypertrophy of breast
+Hypertrophy of tonsils and adenoids
+Hypogammaglobulinemia
+Hypoglycemia
+Hypoosmolality and/or hyponatremia
+Hypoplastic left heart syndrome
+Hypospadias
+Hypoxemia
+Immune thrombocytopenia purpura
+Immunity disorders
+Immunizations and screening for infectious disease
+Impacted cerumen
+Impaction of intestine
+Impulse control disorders NEC
+Indeterminate sex
+Induced abortion
+Infant botulism
+Infant of diabetic mother
+Infantile acne
+Infantile colic
+Infantile spasms w/o intractable epilepsy
+Infection and inflammation due to vascular device implant/graft
+Infection and inflammatory reaction due to nervous system device, implant, and graft
+Infection due to central venous catheter
+Infection due to internal orthopedic device/implant/graft
+Infective arthritis and osteomyelitis (except that caused by tuberculosis or sexually transmitted disease)
+Infective endocarditis
+Infective otitis externa
+Inflammation; infection of eye (except that caused by tuberculosis or sexually transmitted disease)
+Inflammatory conditions of male genital organs
+Inflammatory disease of breast
+Inflammatory diseases of female pelvic organs
+Inflammatory polyps of colon
+Influenza
+Ingrowing nail
+Inguinal hernia
+Intermittent explosive disorder
+Interstitial emphysema and related conditions of newborn
+Intestinal malabsorption
+Intestinal obstruction of newborn
+Intestinal obstruction without hernia
+Intestinal or peritoneal adhesions with obstruction
+Intestine transplant complications
+Intracerebral hemorrhage
+Intracranial injury
+Intrauterine hypoxia and birth asphyxia
+Intraventricular hemorrhage due to birth trauma
+Intraventricular hemorrhage of newborn
+Intussusception
+Iron deficiency anemia
+Irritable bowel syndrome
+Isolated proteinuria
+Jaundice, unspecified
+Joint disorders and dislocations; trauma-related
+Juvenile dermatomyositis
+Juvenile myelomonocytic leukemia
+Juvenile osteochondrosis
+Juvenile osteochondrosis of spine
+Juvenile polyarteritis
+Juvenile rheumatoid arthritis and related disease
+Kawasaki disease
+Kidney transplant complications
+Lack of coordination
+Lactose intolerance or lactase deficiency
+Late effects of cerebrovascular disease
+Left sided colitis
+Leukemias
+Liveborn
+Liver necrosis
+Lung abscess
+Lung disease due to external agents
+Lung transplant complications
+Lymphadenitis
+Lymphangioma, any site
+Lymphoid leukemia
+Malaise and fatigue
+Malignant neoplasm of adrenal gland
+Malignant neoplasm of brain
+Malignant neoplasm of brain stem
+Malignant neoplasm of cerebellum
+Malignant neoplasm of cranial nerves
+Malignant neoplasm of meninges
+Malignant neoplasm of peripheral nerves
+Malignant neoplasm of retina
+Malignant neoplasm of spinal cord
+Malignant neoplasm without specification of site
+Malnutrition
+Malposition of heart and cardiac apex
+Mandibular hypo or hyperplasia
+Mast cell leukemia
+Maternal care due to malposition; malpresentation
+Mature b-cell leukemia
+Mechanical complication gastrostomy
+Mechanical complication of cardiac device, implant, and graft
+Mechanical complication of nervous system device, implant, and graft
+Meckel's diverticulum
+Meconium aspiration
+Meconium obstruction in fetus and newborn
+Medical examination/evaluation
+Melanomas of skin
+Melena
+Meningitis (except that caused by tuberculosis or sexually transmitted disease)
+Menopausal disorders
+Menstrual disorders
+Microtia
+Miscellaneous mental health disorders
+Mitral valve disorders
+Monocytic leukemia
+Mood disorders
+Mood disorders (bipolar disorder)
+Mood disorders (major depressive disorder)
+Mood disorders (manic episodes)
+Moyamoya disease
+Mucopolysaccharidosis
+Multiple myeloma
+Multiple sclerosis
+Mycoses
+Myelodysplastic disease
+Myelodysplastic syndrome
+Myeloid leukemia
+Myeloid sarcoma
+Myelomonocytic leukemia
+NIH stroke scale
+Nausea and vomiting
+Necrotizing enterocolitis
+Neonatal UTI
+Neonatal aspiration, other
+Neonatal candidiasis
+Neonatal hemorrhage
+Neonatal hyperbilirubinemia
+Neonatal hypoglycemia
+Neonatal jaundice w/ preterm delivery
+Neonatal obstruction of nasolacrimal duct
+Neonatal pneumonia
+Neonatal skin infection
+Neonatal tachycardia
+Neoplasm of other lymphatic and hematopoietic tissues
+Neoplasm of uncertain behavior of brain and spinal cord
+Neoplasm of uncertain behavior of pituitary gland and craniopharyngeal duct
+Neoplasms of unspecified nature or uncertain behavior
+Nephritis; nephrosis; renal sclerosis
+Nephrotic syndrome
+Nervous system congenital anomalies
+Neuromuscular dysfunction of bladder
+Neutropenia
+Newborn affected by maternal use of drugs
+Nocturnal enuresis
+Non-Hodgkin's lymphoma
+Non-traumatic intracranial hemorrhage of newborn
+Noninfectious gastroenteritis
+Noninfective neonatal diarrhea
+Nonmalignant breast conditions
+Nonspecific chest pain
+Nutrient element deficiency
+Nutritional deficiencies
+Nystagmus
+OCD
+Ob-related trauma to perineum and vulva
+Obesity
+Obstructed labor due to malposition; malpresentation
+Occlusion and stenosis of cerebral artery
+Occlusion or stenosis of precerebral arteries
+Open wounds of extremities
+Open wounds of head; neck; and trunk
+Oppositional defiant disorder
+Orbital cellulitis
+Orthopedic aftercare, other
+Osteoarthritis
+Osteochondritis dissecans 
+Osteogenesis imperfecta
+Osteoporosis
+Ostium secundum atrial septal defect
+Other CNS infection and poliomyelitis
+Other acquired deformities
+Other aftercare
+Other and ill-defined cerebrovascular disease
+Other and ill-defined heart disease
+Other and unspecified benign neoplasm
+Other bone disease and musculoskeletal deformities
+Other circulatory disease
+Other complications of birth; puerperium affecting management of mother
+Other complications of pregnancy
+Other congenital anomalies
+Other connective tissue disease
+Other convulsions
+Other diseases of bladder and urethra
+Other diseases of kidney and ureters
+Other diseases of veins and lymphatics
+Other disorders of stomach and duodenum
+Other ear and sense organ disorders
+Other endocrine disorders
+Other eye disorders
+Other female genital disorders
+Other fractures
+Other gastrointestinal disorders
+Other hematologic conditions
+Other hereditary and degenerative nervous system conditions
+Other infections; including parasitic
+Other inflammatory condition of skin
+Other injuries and conditions due to external causes
+Other liver diseases
+Other lower respiratory disease
+Other male genital disorders
+Other mechanical complication of other internal orthopedic device, implant, and graft
+Other nervous system disorders
+Other non-epithelial cancer of skin
+Other non-traumatic joint disorders
+Other nutritional; endocrine; and metabolic disorders
+Other pregnancy and delivery including normal
+Other screening for suspected conditions (not mental disorders or infectious disease)
+Other skin disorders
+Other upper respiratory disease
+Otitis media
+Ovarian cyst
+Pain in limb
+Pancreatic disorders (not diabetes)
+Pancytopenia
+Paralysis
+Paralytic ileus
+Parkinson`s disease
+Partial anomalous pulmonary venous connection
+Partial epilepsy w with w/o intractable epilepsy
+Patent ductus arteriosus
+Pathological fracture
+Pectus excavatum
+Pelvic inflammatory disease
+Pelvic varices
+Penile anomalies, other
+Perforation of intestine
+Perforation of tympanic membrane
+Peri-; endo-; and myocarditis; cardiomyopathy (except that caused by tuberculosis or sexually transmitted disease)
+Periapical abscess w or w/o sinus
+Perinatal chronic respiratory disease
+Perinatal congenital infections
+Perinatal infections, other
+Perinatal intestinal perforation
+Peripheral and visceral atherosclerosis
+Peritonitis and intestinal abscess
+Peritonsillar abscess
+Persistent fetal circulation
+Persistent migraine
+Persistent postoperative fistula
+Personality disorders
+Pertussis
+Phlebitis; thrombophlebitis and thromboembolism
+Phobias
+Pilonidal cyst w or w/o abscess
+Plasma cell leukemia
+Pleural effusion
+Pleurisy; pneumothorax; pulmonary collapse
+Pneumonia
+Poisoning by nonmedicinal substances
+Poisoning by other medications and drugs
+Poisoning by psychotropic agents
+Polycystic kidney
+Polydactyly of fingers and toes
+Polyhydramnios and other problems of amniotic cavity
+Postabortion complications
+Postnasal drip
+Posttraumatic stress disorder
+Pre-existing type 1 diabetes complicating pregnancy
+Pre-existing type 2 diabetes complicating pregnancy
+Preterm infants 1250-1499 g, other
+Preterm infants 1500-1749 g, other
+Preterm infants 1750-1999 g, other
+Preterm infants 2000-2499 g, other
+Preterm newborn
+Previous c-section
+Primary apnea of newborn
+Prolapse of female genital organs
+Prolonged pregnancy
+Prolymphocytic leukemia of b-cell type
+Prolymphocytic leukemia of t-cell type
+Pulmonary fibrosis
+Pulmonary heart disease
+Pulmonary valve disorders
+Pyogenic granuloma of skin and subcutaneous tissue
+Radiotherapy encounter
+Rashes
+Recurrent and persistent hematuria
+Redundant prepuce and phimosis
+Rehabilitation care; fitting of prostheses; and adjustment of devices
+Residual codes; unclassified
+Residual foreign body in soft tissue
+Respiratory complications NEC
+Respiratory distress of newborn
+Respiratory distress syndrome in newborn
+Respiratory failure of newborn
+Respiratory failure; insufficiency; arrest
+Respiratory problems after birth, other
+Retinal detachments; defects; vascular occlusion; and retinopathy
+Retropharyngeal abscess
+Rheumatoid arthritis and related disease
+Schizophrenia and other psychotic disorders
+Scoliosis
+Screening and history of mental health and substance abuse codes
+Scrotal varices
+Sebaceous cyst
+Secondary malignancies
+Secondary malignant neoplasm of bone/bone marrow
+Secondary malignant neoplasm of lung
+Seizures w and w/o intractable epilepsy
+Sepsis of newborn
+Septicemia (except in labor)
+Severe birth asphyxia
+Sexually transmitted infections (not HIV or hepatitis)
+Shaken infant syndrome
+Shock
+Short Achilles tendon (acquired)
+Short bowel syndrome
+Short gestation; low birth weight; and fetal growth retardation
+Short stature
+Sickle cell anemia
+Sickle cell disease w/o crisis
+Sickle cell disease with crisis
+Sickle-cell thalassemia w/o crisis
+Sickle-cell thalassemia with crisis
+Simple febrile convulsions
+Skull and face fractures
+Sleep apnea
+Sleep disturbances
+Specified conditions originating in perinatal period
+Specified congenital anomalies of spinal cord, other
+Specified perinatal digestive disorders
+Specified types of hydrocele
+Spina bifida with hydrocephalus - lumbar region
+Spinal cord injury
+Spondylosis; intervertebral disc disorders; other back problems
+Spontaneous abortion
+Spontaneous pneumothorax
+Sprains and strains
+Status epilepticus
+Stenosis of larynx
+Stenosis of nasolacrimal duct, acquired
+Stillbirth
+Strabismus
+Streptococcal sore throat
+Stricture and stenosis of esophagus
+Stridor
+Subarachnoid hemorrhage
+Subarachnoid hemorrhage due to birth trauma
+Subdural and cerebral hemorrhage due to birth trauma
+Subdural, extradural & intracranial hemorrhage 
+Sublingual varices
+Substance-related disorders
+Suicide and intentional self-inflicted injury
+Superficial injury; contusion
+Supracondylar fracture of humerus
+Swelling, mass, or lump in head and neck
+Syncope
+Syndactyly of fingers without fusion of bone
+Synovitis & tenosynovitis, unspecified
+Systemic lupus erythematosus and connective tissue disorders
+Tetanus neonatorum
+Tetralogy of Fallot
+Thalassemia
+Thrombocytopenia, unspecified
+Thyroid disorders
+Tongue tie
+Torsion of testis and spermatic cord
+Total anomalous pulmonary venous connection
+Toxic effect of venom
+Toxic liver disease
+Toxic shock syndrome
+Tracheoesophageal fistula, esophageal atresia and stenosis, congenital
+Tracheostomy complications, other
+Transient alteration of awareness
+Transient cerebral ischemia
+Transient synovitis
+Transient tachypnea of newborn
+Transitory neonatal electrolyte disturbances
+Transposition of great vessels
+Tricuspid atresia and stenosis, congenital
+Tricuspid valve disorders
+Trigger finger
+Tuberculosis
+Type 1 diabetes mellitus w/o complications
+Type 1 diabetes mellitus with complications
+Type 2 diabetes mellitus w/o complications
+Type 2 diabetes mellitus with complications
+Ulcerative colitis
+Umbilical cord complication
+Umbilical hemorrhage of newborn
+Umbilical hernia
+Undescended testis
+Unspecified nephritic syndrome
+Ureteric obstruction
+Ureteric obstruction, other
+Urethral fistula
+Urethral stricture, unspecified
+Urinary tract infections
+Varicose veins of lower extremity
+Varicose veins of other specified sites
+Vascular hamartomas
+Ventricular septal defect
+Vesicoureteral reflux unspecified or w/o reflux nephropathy
+Vesicoureteral reflux with reflux nephropathy
+Viral Infection (COVID-19)
+Viral infection
+Viral infection (mumps)
+Viral infection(infectious mononucleosis)
+Viral infection(viral warts)
+Viral meningitis
+Vitamin deficiency
+Volvulus
+Vomiting of newborn
+Vulval varices
+Wheezing
+Wiskott-Aldrich syndrome
