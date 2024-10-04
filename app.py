@@ -70,7 +70,9 @@ def main():
         last_page = load_last_page(db)
         if last_page:
             st.session_state.page = last_page
-
+    
+    load_user_data(db)
+    
     # Page routing
     if st.session_state.page == "welcome":
         welcome_page()
