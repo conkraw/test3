@@ -56,7 +56,7 @@ def main():
     db = initialize_firebase()
     
     # Initialize session state
-    if "user_code" not in st.session_state: ###
+    if "unique_code" not in st.session_state: ###
         st.session_state.user_code = None ###
         
     if "page" not in st.session_state:
