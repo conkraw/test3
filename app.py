@@ -66,7 +66,7 @@ def main():
     if "document_id" not in st.session_state:
         st.session_state.document_id = None    
 
-    if st.session_state.user_code:
+    if st.session_state.unique_code:
         last_page = load_last_page(db)
         if last_page:
             st.session_state.page = last_page
