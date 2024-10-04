@@ -30,17 +30,20 @@ def save_user_state(db):
         entry = {
             "last_page": st.session_state.page,
             # Add other session data if needed
+            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses_data', 'interventions_data']},  # Add your other session data here
         }
         upload_to_firebase(db, st.session_state.user_code, entry)
 
-def load_last_page(db):
+def load_user_data(db):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
     if st.session_state.user_code:
         user_data = db.collection(collection_name).document(st.session_state.user_code).get()
         if user_data.exists:
-            return user_data.to_dict().get("last_page")
-    return "welcome"
-
+            user_info = user_data.to_dict()
+            st.session_state.page = user_info.get("last_page", "welcome")
+            # Load additional session data
+            for key in ['vs_data']:  # Add your other session data keys here
+                st.session_state[key] = user_info.get(key, None)
         
 def main():
     # Initialize Firebase
