@@ -30,7 +30,7 @@ def save_user_state(db):
         entry = {
             "last_page": st.session_state.page,
             # Add other session data if needed
-            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses_data', 'interventions_data']},  # Add your other session data here
+            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses']},  # Add your other session data here
         }
         upload_to_firebase(db, st.session_state.user_code, entry)
 
