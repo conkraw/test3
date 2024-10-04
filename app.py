@@ -42,7 +42,7 @@ def load_user_data(db):
             user_info = user_data.to_dict()
             st.session_state.page = user_info.get("last_page", "welcome")
             # Load additional session data
-            for key in ['vs_data']:  # Add your other session data keys here
+            for key in ['vs_data','diagnoses_s1']:  # Add your other session data keys here
                 st.session_state[key] = user_info.get(key, None)
         
 def main():
