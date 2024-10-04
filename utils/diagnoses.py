@@ -4,9 +4,15 @@ from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase
 
 def display_diagnoses(db, document_id):
-    # Ensure diagnoses are initialized
+    # Initialize the diagnoses session state if not present
     if 'diagnoses' not in st.session_state:
-        st.session_state.diagnoses = [""] * 5
+        # Load existing diagnoses from Firebase
+        collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+        user_data = db.collection(collection_name).document(document_id).get()
+        if user_data.exists:
+            st.session_state.diagnoses = user_data.to_dict().get('diagnoses_s1', [""] * 5)
+        else:
+            st.session_state.diagnoses = [""] * 5  # Default to empty if no data
 
     # Check if assessment data exists
     if 'vs_data' not in st.session_state or not st.session_state.vs_data:
@@ -41,6 +47,7 @@ def display_diagnoses(db, document_id):
             if not filtered_options and search_input:
                 st.warning("Please select a diagnosis from the suggestions. If there are no suggestions, please alter your search and try again.")
 
+            # Update the diagnoses in session state for persistence
             if current_diagnosis and current_diagnosis in dx_options:
                 st.session_state.diagnoses[i] = current_diagnosis
 
