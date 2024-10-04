@@ -1,10 +1,9 @@
 import streamlit as st
 from utils.file_operations import read_text_file, load_vital_signs
-from utils.session_management import collect_session_data  #######NEED THIS
+from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase
 
-def display_intake_form(db,document_id):
-    
+def display_intake_form(db, document_id):
     st.markdown(f"<h3 style='font-family: \"DejaVu Sans\";'>Welcome {st.session_state.user_name}! Here is the intake form.</h3>", unsafe_allow_html=True)
 
     # Read and display the text from ptinfo.txt
@@ -32,6 +31,17 @@ def display_intake_form(db,document_id):
     vital_signs_file = "vital_signs.txt"
     vital_signs = load_vital_signs(vital_signs_file)
 
+    # Initialize checkboxes in session state if not already done
+    if "vs_data" not in st.session_state:
+        st.session_state.vs_data = {
+            'heart_rate': False,
+            'respiratory_rate': False,
+            'blood_pressure': False,
+            'pulseox': False,
+            'temperature': False,
+            'weight': False,
+        }
+
     # Check if vital_signs is not empty before creating checkboxes
     if vital_signs:
         title_html = """
@@ -49,27 +59,27 @@ def display_intake_form(db,document_id):
 
             # Checkboxes for vital signs
             heart_rate = vital_signs.get("heart_rate", "N/A")
-            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox')
+            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox', value=st.session_state.vs_data['heart_rate'])
 
             respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
-            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox')
+            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox', value=st.session_state.vs_data['respiratory_rate'])
 
             blood_pressure = vital_signs.get("blood_pressure", "N/A")
-            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox')
+            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox', value=st.session_state.vs_data['blood_pressure'])
 
             pulseox = vital_signs.get("pulseox", "N/A")
-            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox')
+            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox', value=st.session_state.vs_data['pulseox'])
 
             temperature = vital_signs.get("temperature", "N/A")
-            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox')
+            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox', value=st.session_state.vs_data['temperature'])
 
             weight = vital_signs.get("weight", "N/A")
-            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox')
+            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox', value=st.session_state.vs_data['weight'])
 
             st.markdown("</div>", unsafe_allow_html=True)
 
         # Button to proceed to the diagnoses page
-        if st.button("Next",key="intake_next_button"):
+        if st.button("Next", key="intake_next_button"):
             st.session_state.vs_data = { 
                 'unique_code': st.session_state.unique_code,
                 'heart_rate': heart_rate_checkbox,
@@ -82,10 +92,10 @@ def display_intake_form(db,document_id):
 
             print(st.session_state.vs_data) 
             
-            session_data = collect_session_data() ###### NEED THIS
+            session_data = collect_session_data()
 
             entry = {'vs_data': st.session_state.vs_data,
-                    'last_page':'intake_form'}  # This assumes you want to upload vs_data
+                    'last_page': 'intake_form'}  # This assumes you want to upload vs_data
 
             upload_message = upload_to_firebase(db, document_id, entry)
             
@@ -97,4 +107,5 @@ def display_intake_form(db,document_id):
 
     else:
         st.error("No vital signs data available.")
+
 
