@@ -66,23 +66,24 @@ def display_intake_form(db, document_id):
             st.markdown("<div style='margin-left: 20px;'>", unsafe_allow_html=True)
 
             # Checkboxes for vital signs with values from session state
-            heart_rate = st.checkbox(f"HEART RATE: {st.session_state.vs_data.get('heart_rate', 'N/A')}", value=st.session_state.vs_data['heart_rate'], key='heart_rate_checkbox')
-            st.session_state.vs_data['heart_rate'] = heart_rate
+            heart_rate = vital_signs.get("heart_rate", "N/A")  # Get original value from vital_signs
+            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", value=st.session_state.vs_data['heart_rate'], key='heart_rate_checkbox')
+            
+            respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
+            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", value=st.session_state.vs_data['respiratory_rate'], key='respiratory_rate_checkbox')
+            
+            blood_pressure = vital_signs.get("blood_pressure", "N/A")
+            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", value=st.session_state.vs_data['blood_pressure'], key='blood_pressure_checkbox')
+            
+            pulseox = vital_signs.get("pulseox", "N/A")
+            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", value=st.session_state.vs_data['pulseox'], key='pulseox_checkbox')
+            
+            temperature = vital_signs.get("temperature", "N/A")
+            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", value=st.session_state.vs_data['temperature'], key='temperature_checkbox')
+            
+            weight = vital_signs.get("weight", "N/A")
+            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", value=st.session_state.vs_data['weight'], key='weight_checkbox')
 
-            respiratory_rate = st.checkbox(f"RESPIRATORY RATE: {st.session_state.vs_data.get('respiratory_rate', 'N/A')}", value=st.session_state.vs_data['respiratory_rate'], key='respiratory_rate_checkbox')
-            st.session_state.vs_data['respiratory_rate'] = respiratory_rate
-
-            blood_pressure = st.checkbox(f"BLOOD PRESSURE: {st.session_state.vs_data.get('blood_pressure', 'N/A')}", value=st.session_state.vs_data['blood_pressure'], key='blood_pressure_checkbox')
-            st.session_state.vs_data['blood_pressure'] = blood_pressure
-
-            pulseox = st.checkbox(f"PULSE OXIMETRY: {st.session_state.vs_data.get('pulseox', 'N/A')}", value=st.session_state.vs_data['pulseox'], key='pulseox_checkbox')
-            st.session_state.vs_data['pulseox'] = pulseox
-
-            temperature = st.checkbox(f"TEMPERATURE: {st.session_state.vs_data.get('temperature', 'N/A')}", value=st.session_state.vs_data['temperature'], key='temperature_checkbox')
-            st.session_state.vs_data['temperature'] = temperature
-
-            weight = st.checkbox(f"WEIGHT: {st.session_state.vs_data.get('weight', 'N/A')}", value=st.session_state.vs_data['weight'], key='weight_checkbox')
-            st.session_state.vs_data['weight'] = weight
 
             st.markdown("</div>", unsafe_allow_html=True)
 
