@@ -29,7 +29,7 @@ def display_intake_form(db, document_id):
 
     # Load vital signs from Firebase
     if "vs_data" not in st.session_state:
-        collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
+        collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
         user_data = db.collection(collection_name).document(document_id).get()
         if user_data.exists:
             st.session_state.vs_data = user_data.to_dict().get('vs_data', {
@@ -50,6 +50,9 @@ def display_intake_form(db, document_id):
                 'weight': False,
             }
 
+    # Load original vital signs values for display
+    vital_signs = load_vital_signs("vital_signs.txt")
+
     # Display the vital signs checkboxes
     if st.session_state.vs_data:
         title_html = """
@@ -68,22 +71,21 @@ def display_intake_form(db, document_id):
             # Checkboxes for vital signs with values from session state
             heart_rate = vital_signs.get("heart_rate", "N/A")  # Get original value from vital_signs
             heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", value=st.session_state.vs_data['heart_rate'], key='heart_rate_checkbox')
-            
+
             respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
             respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", value=st.session_state.vs_data['respiratory_rate'], key='respiratory_rate_checkbox')
-            
+
             blood_pressure = vital_signs.get("blood_pressure", "N/A")
             blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", value=st.session_state.vs_data['blood_pressure'], key='blood_pressure_checkbox')
-            
+
             pulseox = vital_signs.get("pulseox", "N/A")
             pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", value=st.session_state.vs_data['pulseox'], key='pulseox_checkbox')
-            
+
             temperature = vital_signs.get("temperature", "N/A")
             temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", value=st.session_state.vs_data['temperature'], key='temperature_checkbox')
-            
+
             weight = vital_signs.get("weight", "N/A")
             weight_checkbox = st.checkbox(f"WEIGHT: {weight}", value=st.session_state.vs_data['weight'], key='weight_checkbox')
-
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -102,5 +104,3 @@ def display_intake_form(db, document_id):
             st.rerun()  # Rerun the app to refresh the page
     else:
         st.error("No vital signs data available.")
-
-
