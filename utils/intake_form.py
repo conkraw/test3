@@ -84,7 +84,8 @@ def display_intake_form(db,document_id):
             
             session_data = collect_session_data() ###### NEED THIS
 
-            entry = {'vs_data': st.session_state.vs_data}  # This assumes you want to upload vs_data
+            entry = {'vs_data': st.session_state.vs_data,
+                    'last_page':'intake_form'}  # This assumes you want to upload vs_data
 
             upload_message = upload_to_firebase(db, document_id, entry)
             
