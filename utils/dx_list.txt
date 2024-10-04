@@ -1,0 +1,10 @@
+Diabetes Mellitus
+Hypertension
+Asthma
+Chronic Obstructive Pulmonary Disease (COPD)
+Heart Failure
+Pneumonia
+Anemia
+Kidney Disease
+Liver Cirrhosis
+Hypothyroidism
