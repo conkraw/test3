@@ -57,7 +57,7 @@ def main():
     
     # Initialize session state
     if "unique_code" not in st.session_state: ###
-        st.session_state.user_code = None ###
+        st.session_state.unique_code  = None ###
         
     if "page" not in st.session_state:
         st.session_state.page = "welcome"
