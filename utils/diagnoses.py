@@ -53,7 +53,7 @@ def display_diagnoses(db, document_id):
                 # Create entry with the diagnoses data, including last page
                 entry = {
                     "diagnoses_s1": diagnoses,
-                    "last_page": "Intervention Entry"  # Include the last_page in the entry
+                    "last_page": "diagnoses"  # Include the last_page in the entry
                 }
 
                 # Log the entry before uploading
