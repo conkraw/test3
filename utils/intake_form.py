@@ -27,23 +27,31 @@ def display_intake_form(db, document_id):
     else:
         st.write("No text found in the document.")
 
-    # Load vital signs
-    vital_signs_file = "vital_signs.txt"
-    vital_signs = load_vital_signs(vital_signs_file)
-
-    # Initialize checkboxes in session state if not already done
+    # Load vital signs from Firebase
     if "vs_data" not in st.session_state:
-        st.session_state.vs_data = {
-            'heart_rate': False,
-            'respiratory_rate': False,
-            'blood_pressure': False,
-            'pulseox': False,
-            'temperature': False,
-            'weight': False,
-        }
+        collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
+        user_data = db.collection(collection_name).document(document_id).get()
+        if user_data.exists:
+            st.session_state.vs_data = user_data.to_dict().get('vs_data', {
+                'heart_rate': False,
+                'respiratory_rate': False,
+                'blood_pressure': False,
+                'pulseox': False,
+                'temperature': False,
+                'weight': False,
+            })
+        else:
+            st.session_state.vs_data = {
+                'heart_rate': False,
+                'respiratory_rate': False,
+                'blood_pressure': False,
+                'pulseox': False,
+                'temperature': False,
+                'weight': False,
+            }
 
-    # Check if vital_signs is not empty before creating checkboxes
-    if vital_signs:
+    # Display the vital signs checkboxes
+    if st.session_state.vs_data:
         title_html = """
         <h2 style="font-family: 'DejaVu Sans'; font-size: 24px; margin-bottom: 0; color: #2c3e50;">
             Vital Signs:</h2>
@@ -57,54 +65,40 @@ def display_intake_form(db, document_id):
         with col2:
             st.markdown("<div style='margin-left: 20px;'>", unsafe_allow_html=True)
 
-            # Checkboxes for vital signs
-            heart_rate = vital_signs.get("heart_rate", "N/A")
-            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox', value=st.session_state.vs_data['heart_rate'])
+            # Checkboxes for vital signs with values from session state
+            heart_rate = st.checkbox(f"HEART RATE: {st.session_state.vs_data.get('heart_rate', 'N/A')}", value=st.session_state.vs_data['heart_rate'], key='heart_rate_checkbox')
+            st.session_state.vs_data['heart_rate'] = heart_rate
 
-            respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
-            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox', value=st.session_state.vs_data['respiratory_rate'])
+            respiratory_rate = st.checkbox(f"RESPIRATORY RATE: {st.session_state.vs_data.get('respiratory_rate', 'N/A')}", value=st.session_state.vs_data['respiratory_rate'], key='respiratory_rate_checkbox')
+            st.session_state.vs_data['respiratory_rate'] = respiratory_rate
 
-            blood_pressure = vital_signs.get("blood_pressure", "N/A")
-            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox', value=st.session_state.vs_data['blood_pressure'])
+            blood_pressure = st.checkbox(f"BLOOD PRESSURE: {st.session_state.vs_data.get('blood_pressure', 'N/A')}", value=st.session_state.vs_data['blood_pressure'], key='blood_pressure_checkbox')
+            st.session_state.vs_data['blood_pressure'] = blood_pressure
 
-            pulseox = vital_signs.get("pulseox", "N/A")
-            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox', value=st.session_state.vs_data['pulseox'])
+            pulseox = st.checkbox(f"PULSE OXIMETRY: {st.session_state.vs_data.get('pulseox', 'N/A')}", value=st.session_state.vs_data['pulseox'], key='pulseox_checkbox')
+            st.session_state.vs_data['pulseox'] = pulseox
 
-            temperature = vital_signs.get("temperature", "N/A")
-            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox', value=st.session_state.vs_data['temperature'])
+            temperature = st.checkbox(f"TEMPERATURE: {st.session_state.vs_data.get('temperature', 'N/A')}", value=st.session_state.vs_data['temperature'], key='temperature_checkbox')
+            st.session_state.vs_data['temperature'] = temperature
 
-            weight = vital_signs.get("weight", "N/A")
-            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox', value=st.session_state.vs_data['weight'])
+            weight = st.checkbox(f"WEIGHT: {st.session_state.vs_data.get('weight', 'N/A')}", value=st.session_state.vs_data['weight'], key='weight_checkbox')
+            st.session_state.vs_data['weight'] = weight
 
             st.markdown("</div>", unsafe_allow_html=True)
 
         # Button to proceed to the diagnoses page
         if st.button("Next", key="intake_next_button"):
-            st.session_state.vs_data = { 
-                'unique_code': st.session_state.unique_code,
-                'heart_rate': heart_rate_checkbox,
-                'respiratory_rate': respiratory_rate_checkbox,
-                'blood_pressure': blood_pressure_checkbox,
-                'pulseox': pulseox_checkbox,
-                'temperature': temperature_checkbox,
-                'weight': weight_checkbox,
+            entry = {
+                'vs_data': st.session_state.vs_data,
+                'last_page': 'intake_form'  # This assumes you want to upload vs_data
             }
 
-            print(st.session_state.vs_data) 
-            
-            session_data = collect_session_data()
-
-            entry = {'vs_data': st.session_state.vs_data,
-                    'last_page': 'intake_form'}  # This assumes you want to upload vs_data
-
             upload_message = upload_to_firebase(db, document_id, entry)
-            
-            st.session_state.intake_submitted = True
-            
-            st.session_state.page = "diagnoses"  # Move to Diagnoses page
-            
-            st.rerun()  # Rerun the app to refresh the page
 
+            st.session_state.intake_submitted = True
+            st.session_state.page = "diagnoses"  # Move to Diagnoses page
+
+            st.rerun()  # Rerun the app to refresh the page
     else:
         st.error("No vital signs data available.")
 
