@@ -56,6 +56,10 @@ def main():
     # Initialize Firebase
     db = initialize_firebase()
     
+    # Initialize session state variables
+    if "user_code" not in st.session_state:
+        st.session_state.user_code = None  #
+        
     # Initialize session state
     if "unique_code" not in st.session_state: ###
         st.session_state.unique_code  = None ###
@@ -67,15 +71,13 @@ def main():
     if "document_id" not in st.session_state:
         st.session_state.document_id = None    
 
-    if st.session_state.unique_code:
-        last_page = load_last_page(db)
-        if last_page:
-            st.session_state.page = last_page
     
-    load_user_data(db)
-
     st.write(f"Unique Code: {st.session_state.unique_code}")
     st.write(f"Current Page: {st.session_state.page}")
+    
+    if st.session_state.unique_code:
+        load_user_data(db)  
+
     
     # Page routing
     if st.session_state.page == "welcome":
