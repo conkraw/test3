@@ -73,7 +73,7 @@ def main():
     
     load_user_data(db)
 
-    st.write(f"User Code: {st.session_state.user_code}")
+    st.write(f"Unique Code: {st.session_state.unique_code}")
     st.write(f"Current Page: {st.session_state.page}")
     
     # Page routing
