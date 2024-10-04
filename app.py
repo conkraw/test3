@@ -72,6 +72,9 @@ def main():
             st.session_state.page = last_page
     
     load_user_data(db)
+
+    st.write(f"User Code: {st.session_state.user_code}")
+    st.write(f"Current Page: {st.session_state.page}")
     
     # Page routing
     if st.session_state.page == "welcome":
