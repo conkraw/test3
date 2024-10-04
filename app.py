@@ -42,14 +42,15 @@ def save_user_state(db):
 
 def load_user_data(db):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
-    if st.session_state.user_code:
-        user_data = db.collection(collection_name).document(st.session_state.user_code).get()
+    if st.session_state.unique_code:  # Check unique_code instead
+        user_data = db.collection(collection_name).document(st.session_state.unique_code).get()
         if user_data.exists:
             user_info = user_data.to_dict()
             st.session_state.page = user_info.get("last_page", "welcome")
             # Load additional session data
             for key in ['vs_data','diagnoses_s1']:  # Add your other session data keys here
                 st.session_state[key] = user_info.get(key, None)
+
         
 def main():
     # Initialize Firebase
