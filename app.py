@@ -29,10 +29,16 @@ def save_user_state(db):
     if st.session_state.user_code:
         entry = {
             "last_page": st.session_state.page,
-            # Add other session data if needed
-            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses']},  # Add your other session data here
+            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses']},
         }
         upload_to_firebase(db, st.session_state.user_code, entry)
+        
+        # Fetch back the saved entry to confirm
+        user_data = db.collection(st.secrets["FIREBASE_COLLECTION_NAME"]).document(st.session_state.user_code).get()
+        if user_data.exists:
+            st.write("State saved:", user_data.to_dict())  # Debugging line
+        else:
+            st.write("Failed to fetch user data after saving.")  # Debugging line
 
 def load_user_data(db):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
