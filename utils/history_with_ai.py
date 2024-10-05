@@ -114,6 +114,10 @@ def run_virtual_patient(db, document_id):
                 virtual_patient_response = get_chatgpt_response(user_input)
                 st.session_state.session_data['responses'].append(virtual_patient_response)
 
+                # Clear the input field
+                st.experimental_rerun()
+
+                # Display the new response
                 st.write(f"Virtual Patient: {virtual_patient_response}")
 
                 # Collect session data and prepare for upload to Firebase
@@ -150,5 +154,4 @@ def run_virtual_patient(db, document_id):
 
 if __name__ == '__main__':
     run_virtual_patient(db, document_id)
-
 
