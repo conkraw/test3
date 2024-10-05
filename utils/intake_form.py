@@ -1,8 +1,10 @@
 import streamlit as st
 from utils.file_operations import read_text_file, load_vital_signs
+from utils.session_management import collect_session_data  #######NEED THIS
 from utils.firebase_operations import upload_to_firebase
 
-def display_intake_form(db, document_id):
+def display_intake_form(db,document_id):
+    
     st.markdown(f"<h3 style='font-family: \"DejaVu Sans\";'>Welcome {st.session_state.user_name}! Here is the intake form.</h3>", unsafe_allow_html=True)
 
     # Read and display the text from ptinfo.txt
@@ -67,10 +69,9 @@ def display_intake_form(db, document_id):
             st.markdown("</div>", unsafe_allow_html=True)
 
         # Button to proceed to the diagnoses page
-        if st.button("Next", key="intake_next_button"):
+        if st.button("Next",key="intake_next_button"):
             st.session_state.vs_data = { 
                 'unique_code': st.session_state.unique_code,
-                'user_name': st.session_state.user_name,  # Include user name
                 'heart_rate': heart_rate_checkbox,
                 'respiratory_rate': respiratory_rate_checkbox,
                 'blood_pressure': blood_pressure_checkbox,
@@ -79,12 +80,18 @@ def display_intake_form(db, document_id):
                 'weight': weight_checkbox,
             }
 
-            # Upload vital signs data to Firebase
-            entry = {'vs_data': st.session_state.vs_data}
+            print(st.session_state.vs_data) 
+            
+            session_data = collect_session_data() ###### NEED THIS
+
+            entry = {'vs_data': st.session_state.vs_data}  # This assumes you want to upload vs_data
+
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.intake_submitted = True
+            
             st.session_state.page = "diagnoses"  # Move to Diagnoses page
+            
             st.rerun()  # Rerun the app to refresh the page
 
     else:
