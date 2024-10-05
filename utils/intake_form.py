@@ -108,9 +108,9 @@ def display_intake_form(db, document_id):
                 #st.success("Data uploaded successfully!")
                 
                 # Set the session state for the next page
-                st.session_state.page = "diagnoses"
-                st.write(f"Current page set to: {st.session_state.page}")
-                st.write(f"Session state after update: {st.session_state}")
+            st.session_state.page = "diagnoses"
+            st.write(f"Current page set to: {st.session_state.page}")
+            st.write(f"Session state after update: {st.session_state}")
                 
                 # Rerun to refresh the page
                 #st.rerun()  # Consider using this instead of st.rerun()
