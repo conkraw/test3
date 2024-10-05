@@ -83,6 +83,6 @@ def display_intake_form(db, document_id):
             # Set the session state for the next page
             st.session_state.page = "diagnoses"
             st.write(f"Current page set to: {st.session_state.page}")
-            st.experimental_rerun()  # Ensure the app refreshes to show the new page
+            st.rerun()  # Ensure the app refreshes to show the new page
     else:
         st.error("No vital signs data available.")
