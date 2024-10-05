@@ -101,6 +101,6 @@ def display_intake_form(db, document_id):
             st.session_state.intake_submitted = True
             st.session_state.page = "diagnoses"  # Move to Diagnoses page
 
-            st.rerun()  # Rerun the app to refresh the page
+            #st.rerun()  # Rerun the app to refresh the page
     else:
         st.error("No vital signs data available.")
