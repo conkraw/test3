@@ -103,20 +103,18 @@ def run_virtual_patient(db, document_id):
     elapsed_time = (time.time() - st.session_state.start_time) / 60
 
     if elapsed_time < 15:
-        with st.form("question_form"):
+        with st.form("question_form", clear_on_submit=True):
             user_input = st.text_input("Ask the virtual patient typical history questions you would want to know for this case:")
             submit_button = st.form_submit_button("Ask")
 
             if submit_button and user_input:
+                # Process the user input
                 st.session_state.session_data['questions_asked'].append(user_input)
 
                 virtual_patient_response = get_chatgpt_response(user_input)
                 st.session_state.session_data['responses'].append(virtual_patient_response)
 
                 st.write(f"Virtual Patient: {virtual_patient_response}")
-
-                # No need to update the sidebar again here
-                # Sidebar will show the updated questions and responses on next iteration
 
                 # Collect session data and prepare for upload to Firebase
                 entry = collect_session_data()  # Collect session data
