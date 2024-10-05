@@ -16,27 +16,27 @@ def display_intake_form(db, document_id):
         st.write("No text found in the document.")
 
     # Load vital signs from Firebase
-    #if "vs_data" not in st.session_state:
-    #    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    #    user_data = db.collection(collection_name).document(document_id).get()
-    #    if user_data.exists:
-    #        st.session_state.vs_data = user_data.to_dict().get('vs_data', {
-    #            'heart_rate': False,
-    #            'respiratory_rate': False,
-    #            'blood_pressure': False,
-    #            'pulseox': False,
-    #            'temperature': False,
-    #            'weight': False,
-    #        })
-    #    else:
-    #        st.session_state.vs_data = {
-    #            'heart_rate': False,
-    #            'respiratory_rate': False,
-    #            'blood_pressure': False,
-    #            'pulseox': False,
-    #            'temperature': False,
-    #            'weight': False,
-    #        }
+    if "vs_data" not in st.session_state:
+        collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+        user_data = db.collection(collection_name).document(document_id).get()
+        if user_data.exists:
+            st.session_state.vs_data = user_data.to_dict().get('vs_data', {
+                'heart_rate': False,
+                'respiratory_rate': False,
+                'blood_pressure': False,
+                'pulseox': False,
+                'temperature': False,
+                'weight': False,
+            })
+        else:
+            st.session_state.vs_data = {
+                'heart_rate': False,
+                'respiratory_rate': False,
+                'blood_pressure': False,
+                'pulseox': False,
+                'temperature': False,
+                'weight': False,
+            }
 
     # Load original vital signs values for display
     vital_signs = load_vital_signs("vital_signs.txt")
