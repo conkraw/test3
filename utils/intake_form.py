@@ -100,19 +100,19 @@ def display_intake_form(db, document_id):
                     'temperature': temperature_checkbox,
                     'weight': weight_checkbox,
                 },
-                'last_page': 'intake_form'  # This assumes you want to upload vs_data
+                'last_page': 'intake_form'
             }
-        
+            
             try:
                 upload_message = upload_to_firebase(db, document_id, entry)
-                st.success("Data uploaded successfully!")  # Success message
+                st.success("Data uploaded successfully!")
+                
+                # Set the session state for the next page
+                st.session_state.page = "diagnoses"
+                st.write(f"Current page set to: {st.session_state.page}")
+                st.write(f"Session state after update: {st.session_state}")
+                
+                # Rerun to refresh the page
+                st.experimental_rerun()  # Consider using this instead of st.rerun()
             except Exception as e:
-                st.error(f"Error uploading data: {e}")  # Error message
-        
-            st.session_state.intake_submitted = True
-            st.session_state.page = "diagnoses"  # Move to Diagnoses page
-            st.write(f"Current page set to: {st.session_state.page}") 
-            st.write(f"Session state after update: {st.session_state}") 
-            st.rerun()  # Rerun the app to refresh the page
-    else:
-        st.error("No vital signs data available.")
+                st.error(f"Error uploading data: {e}")
