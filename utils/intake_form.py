@@ -113,6 +113,6 @@ def display_intake_form(db, document_id):
                 st.write(f"Session state after update: {st.session_state}")
                 
                 # Rerun to refresh the page
-                st.experimental_rerun()  # Consider using this instead of st.rerun()
+                st.rerun()  # Consider using this instead of st.rerun()
             except Exception as e:
                 st.error(f"Error uploading data: {e}")
