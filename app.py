@@ -23,20 +23,21 @@ from utils.laboratory_features import display_laboratory_features
 from utils.treatments import display_treatments
 from utils.firebase_operations import initialize_firebase, upload_to_firebase
 from utils.session_management import collect_session_data
-import uuid  # To generate unique document IDs
 
 def main():
     # Initialize Firebase
     db = initialize_firebase()
     
     # Initialize session state
-    if "unique_code" not in st.session_state:
-        st.session_state.unique_code = None
+    if "user_code" not in st.session_state:
+        st.session_state.user_code = None
+        
+    if "user_name" not in st.session_state:
+        st.session_state.user_name = None  # Initialize user_name
         
     if "page" not in st.session_state:
         st.session_state.page = "welcome"
     
-    # Generate a unique document ID at the start of the session
     if "document_id" not in st.session_state:
         st.session_state.document_id = None    
 
