@@ -115,12 +115,8 @@ def run_virtual_patient(db, document_id):
 
                 st.write(f"Virtual Patient: {virtual_patient_response}")
 
-                # Update the sidebar after new question is asked
-                with st.sidebar:
-                    st.header("Questions and Responses")
-                    for question, response in zip(st.session_state.session_data['questions_asked'], st.session_state.session_data['responses']):
-                        st.write(f"**Q:** {question}")
-                        st.write(f"**A:** {response}")
+                # No need to update the sidebar again here
+                # Sidebar will show the updated questions and responses on next iteration
 
                 # Collect session data and prepare for upload to Firebase
                 entry = collect_session_data()  # Collect session data
@@ -156,4 +152,5 @@ def run_virtual_patient(db, document_id):
 
 if __name__ == '__main__':
     run_virtual_patient(db, document_id)
+
 
