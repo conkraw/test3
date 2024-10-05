@@ -24,6 +24,20 @@ from utils.treatments import display_treatments
 from utils.firebase_operations import initialize_firebase, upload_to_firebase
 from utils.session_management import collect_session_data
 
+def load_user_data(db):
+    """Load user data from Firebase and store it in session state."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    if st.session_state.user_code:
+        user_data = db.collection(collection_name).document(st.session_state.user_code).get()
+        if user_data.exists:
+            user_data_dict = user_data.to_dict()
+            # Store all user data in session state
+            for key, value in user_data_dict.items():
+                st.session_state[key] = value
+            st.write("User data loaded into session state:")
+            for key, value in st.session_state.items():
+                st.write(f"{key}: {value}")
+
 def main():
     # Initialize Firebase
     db = initialize_firebase()
