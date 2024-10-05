@@ -103,9 +103,9 @@ def display_intake_form(db, document_id):
                 'last_page': 'intake_form'
             }
             
-            try:
-                upload_message = upload_to_firebase(db, document_id, entry)
-                st.success("Data uploaded successfully!")
+            #try:
+                #upload_message = upload_to_firebase(db, document_id, entry)
+                #st.success("Data uploaded successfully!")
                 
                 # Set the session state for the next page
                 st.session_state.page = "diagnoses"
@@ -114,5 +114,5 @@ def display_intake_form(db, document_id):
                 
                 # Rerun to refresh the page
                 #st.rerun()  # Consider using this instead of st.rerun()
-            except Exception as e:
-                st.error(f"Error uploading data: {e}")
+            #except Exception as e:
+            #    st.error(f"Error uploading data: {e}")
