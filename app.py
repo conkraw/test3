@@ -29,40 +29,26 @@ def save_user_state(db):
     if st.session_state.user_code:
         entry = {
             "last_page": st.session_state.page,
-            **{key: st.session_state.get(key, None) for key in ['vs_data', 'diagnoses']},
+            # Add other session data if needed
         }
         upload_to_firebase(db, st.session_state.user_code, entry)
-        
-        # Fetch back the saved entry to confirm
-        user_data = db.collection(st.secrets["FIREBASE_COLLECTION_NAME"]).document(st.session_state.user_code).get()
-        if user_data.exists:
-            st.write("State saved:", user_data.to_dict())  # Debugging line
-        else:
-            st.write("Failed to fetch user data after saving.")  # Debugging line
 
-def load_user_data(db):
+def load_last_page(db):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
-    if st.session_state.unique_code:  # Check unique_code instead
-        user_data = db.collection(collection_name).document(st.session_state.unique_code).get()
+    if st.session_state.user_code:
+        user_data = db.collection(collection_name).document(st.session_state.user_code).get()
         if user_data.exists:
-            user_info = user_data.to_dict()
-            st.session_state.page = user_info.get("last_page", "welcome")
-            # Load additional session data
-            for key in ['vs_data','diagnoses_s1']:  # Add your other session data keys here
-                st.session_state[key] = user_info.get(key, None)
+            return user_data.to_dict().get("last_page")
+    return "welcome"
 
         
 def main():
     # Initialize Firebase
     db = initialize_firebase()
     
-    # Initialize session state variables
-    if "user_code" not in st.session_state:
-        st.session_state.user_code = None  #
-        
     # Initialize session state
-    if "unique_code" not in st.session_state: ###
-        st.session_state.unique_code  = None ###
+    if "user_code" not in st.session_state: ###
+        st.session_state.user_code = None ###
         
     if "page" not in st.session_state:
         st.session_state.page = "welcome"
@@ -71,14 +57,11 @@ def main():
     if "document_id" not in st.session_state:
         st.session_state.document_id = None    
 
-    
-    st.write(f"Unique Code: {st.session_state.unique_code}")
-    st.write(f"Current Page: {st.session_state.page}")
-    
-    if st.session_state.unique_code:
-        load_user_data(db)  
+    if st.session_state.user_code:
+        last_page = load_last_page(db)
+        if last_page:
+            st.session_state.page = last_page
 
-    
     # Page routing
     if st.session_state.page == "welcome":
         welcome_page()
@@ -88,11 +71,8 @@ def main():
         st.session_state.document_id = login_page(users, db) 
     elif st.session_state.page == "intake_form":
         display_intake_form(db, st.session_state.document_id)
-        save_user_state(db) 
     elif st.session_state.page == "diagnoses":
-        st.write("Navigating to Diagnoses page...")  # This should confirm we are in the right spot
-        display_diagnoses(db, st.session_state.document_id)
-        save_user_state(db) 
+        display_diagnoses(db,st.session_state.document_id)
     elif st.session_state.page == "Intervention Entry":
         intervention_entry_main(db,st.session_state.document_id)
     elif st.session_state.page == "History with AI":
