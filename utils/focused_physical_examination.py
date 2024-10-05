@@ -60,4 +60,4 @@ def display_focused_physical_examination(db, document_id):
 if __name__ == '__main__':
     # Assuming you have a function to initialize your Firebase `db` connection and get `document_id`
     # main(db, document_id) would be called here
-    pass
+    #pass
