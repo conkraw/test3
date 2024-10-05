@@ -34,9 +34,16 @@ def load_user_data(db):
             # Store all user data in session state
             for key, value in user_data_dict.items():
                 st.session_state[key] = value
-            st.write("User data loaded into session state:")
-            for key, value in st.session_state.items():
-                st.write(f"{key}: {value}")
+
+            # Debug statement to check if unique_code is in session state
+            if "unique_code" in st.session_state:
+                st.write("Unique Code and associated data loaded into session state:")
+                st.write(f"Unique Code: {st.session_state.unique_code}")
+                for key, value in st.session_state.items():
+                    if key.startswith("unique_code") or key in user_data_dict:
+                        st.write(f"{key}: {value}")
+            else:
+                st.write("No unique_code found in session state.")
 
 def main():
     # Initialize Firebase
