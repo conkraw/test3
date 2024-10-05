@@ -51,6 +51,20 @@ def load_existing_data(db, document_id):
         return user_data.to_dict().get("questions_asked", []), user_data.to_dict().get("responses", [])
     return [], []
 
+def remove_duplicates(questions, responses):
+    """Remove duplicates from questions and responses."""
+    unique_questions = []
+    unique_responses = []
+    seen = set()
+
+    for question, response in zip(questions, responses):
+        if question not in seen:
+            unique_questions.append(question)
+            unique_responses.append(response)
+            seen.add(question)
+
+    return unique_questions, unique_responses
+
 def run_virtual_patient(db, document_id):
     st.title("Virtual Patient")
 
@@ -72,6 +86,12 @@ def run_virtual_patient(db, document_id):
     existing_questions, existing_responses = load_existing_data(db, document_id)
     st.session_state.session_data['questions_asked'].extend(existing_questions)
     st.session_state.session_data['responses'].extend(existing_responses)
+
+    # Remove duplicates
+    st.session_state.session_data['questions_asked'], st.session_state.session_data['responses'] = remove_duplicates(
+        st.session_state.session_data['questions_asked'], 
+        st.session_state.session_data['responses']
+    )
 
     # Display existing questions and responses in the sidebar
     with st.sidebar:
@@ -135,4 +155,5 @@ def run_virtual_patient(db, document_id):
         st.rerun()
 
 if __name__ == '__main__':
-    run_virtual_patient()
+    run_virtual_patient(db, document_id)
+
