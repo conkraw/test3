@@ -25,22 +25,13 @@ from utils.firebase_operations import initialize_firebase, upload_to_firebase
 from utils.session_management import collect_session_data
 import uuid  # To generate unique document IDs
 
-def save_user_state(db):
-    if st.session_state.user_code:
-        entry = {
-            "last_page": st.session_state.page,
-            # Add other session data if needed
-        }
-        upload_to_firebase(db, st.session_state.user_code, entry)
-
-def load_last_page(db):
-    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
+def load_user_data(db):
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     if st.session_state.user_code:
         user_data = db.collection(collection_name).document(st.session_state.user_code).get()
         if user_data.exists:
-            return user_data.to_dict().get("last_page")
-    return "welcome"
-
+            return user_data.to_dict()
+    return {}
         
 def main():
     # Initialize Firebase
