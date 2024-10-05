@@ -88,7 +88,7 @@ def main():
         st.session_state.document_id = login_page(users, db) 
     elif st.session_state.page == "intake_form":
         display_intake_form(db, st.session_state.document_id)
-        save_user_state(db) 
+        #save_user_state(db) 
     elif st.session_state.page == "diagnoses":
         display_diagnoses(db,st.session_state.document_id)
         save_user_state(db) 
