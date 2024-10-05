@@ -73,6 +73,13 @@ def run_virtual_patient(db, document_id):
     st.session_state.session_data['questions_asked'].extend(existing_questions)
     st.session_state.session_data['responses'].extend(existing_responses)
 
+    # Display existing questions and responses in the sidebar
+    with st.sidebar:
+        st.header("Questions and Responses")
+        for question, response in zip(st.session_state.session_data['questions_asked'], st.session_state.session_data['responses']):
+            st.write(f"**Q:** {question}")
+            st.write(f"**A:** {response}")
+
     elapsed_time = (time.time() - st.session_state.start_time) / 60
 
     if elapsed_time < 15:
@@ -88,6 +95,7 @@ def run_virtual_patient(db, document_id):
 
                 st.write(f"Virtual Patient: {virtual_patient_response}")
 
+                # Update the sidebar after new question is asked
                 with st.sidebar:
                     st.header("Questions and Responses")
                     for question, response in zip(st.session_state.session_data['questions_asked'], st.session_state.session_data['responses']):
@@ -125,3 +133,6 @@ def run_virtual_patient(db, document_id):
         st.session_state.page = "Focused Physical Examination"
         st.write("Session ended. You can start a new session.")
         st.rerun()
+
+if __name__ == '__main__':
+    run_virtual_patient()
