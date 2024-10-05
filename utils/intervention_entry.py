@@ -1,30 +1,36 @@
 import streamlit as st
-import pandas as pd
-from utils.session_management import collect_session_data  #######NEED THIS
-from utils.firebase_operations import upload_to_firebase  
+from utils.session_management import collect_session_data
+from utils.firebase_operations import upload_to_firebase
 
+def load_existing_intervention(db, document_id):
+    """Load existing intervention description from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    
+    if user_data.exists:
+        return user_data.to_dict().get("interventions", "")
+    return ""
 
-def main(db,document_id):
+def main(db, document_id):
     st.title("Intervention Description Entry")
+
+    # Load existing intervention description
+    existing_intervention = load_existing_intervention(db, document_id)
 
     # Prompt for user input
     st.header("Describe any interventions that you would currently perform.")
-    interventions = st.text_area("Interventions Description", height=200)
+    interventions = st.text_area("Interventions Description", height=200, value=existing_intervention)
 
-    # Button to save to a local file (or any other desired action)
-    if st.button("Save Intervention",key="interventions_submit_button"):
+    # Button to save to Firebase
+    if st.button("Save Intervention", key="interventions_submit_button"):
         if interventions:
             # Collect session data
             session_data = collect_session_data()  # Collect session data
             
-            # Append interventions to the session data
-            #session_data['interventions'].append({
-            #    "interventions": interventions
-            #})
-
-            # Create entry with the diagnoses data
+            # Create entry with the interventions data
             entry = {
-                "interventions": interventions}
+                "interventions": interventions
+            }
             
             # Upload the session data to Firebase
             upload_message = upload_to_firebase(db, document_id, entry)
