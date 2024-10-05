@@ -1,15 +1,7 @@
 import streamlit as st
 from utils.file_operations import read_text_file, load_vital_signs
 from utils.session_management import collect_session_data
-from utils.firebase_operations import upload_to_firebase, initialize_firebase
-
-def load_user_data(db):
-    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    if st.session_state.user_code:
-        user_data = db.collection(collection_name).document(st.session_state.user_code).get()
-        if user_data.exists:
-            return user_data.to_dict()
-    return {}
+from utils.firebase_operations import upload_to_firebase
 
 def display_intake_form(db, document_id):
     st.markdown(f"<h3 style='font-family: \"DejaVu Sans\";'>Welcome {st.session_state.user_name}! Here is the intake form.</h3>", unsafe_allow_html=True)
@@ -19,7 +11,19 @@ def display_intake_form(db, document_id):
     document_text = read_text_file(txt_file_path)
 
     if document_text:
-        st.markdown(f"<h2>Patient Information:</h2>{document_text}", unsafe_allow_html=True)
+        title_html = """
+        <h2 style="font-family: 'DejaVu Sans'; font-size: 24px; margin-bottom: 10px; color: #2c3e50;">
+            Patient Information:
+        </h2>
+        """
+        st.markdown(title_html, unsafe_allow_html=True)
+
+        custom_html = f"""
+        <div style="font-family: 'DejaVu Sans'; font-size: 18px; line-height: 1.5; color: #34495e; background-color: #ecf0f1; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            {document_text.replace('\n', '<br>')}
+        </div>
+        """
+        st.markdown(custom_html, unsafe_allow_html=True)
     else:
         st.write("No text found in the document.")
 
@@ -27,21 +31,41 @@ def display_intake_form(db, document_id):
     vital_signs_file = "vital_signs.txt"
     vital_signs = load_vital_signs(vital_signs_file)
 
-    # Load user data
-    user_data = load_user_data(db)
-    vs_data = user_data.get('vs_data', {}) if user_data else {}
-
     # Check if vital_signs is not empty before creating checkboxes
     if vital_signs:
-        st.markdown("<h2>Vital Signs:</h2>", unsafe_allow_html=True)
+        title_html = """
+        <h2 style="font-family: 'DejaVu Sans'; font-size: 24px; margin-bottom: 0; color: #2c3e50;">
+            Vital Signs:</h2>
+        """
+        st.markdown(title_html, unsafe_allow_html=True)
 
-        # Checkboxes for vital signs
-        heart_rate_checkbox = st.checkbox(f"HEART RATE: {vital_signs.get('heart_rate', 'N/A')}", key='heart_rate_checkbox', value=vs_data.get('heart_rate', False))
-        respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {vital_signs.get('respiratory_rate', 'N/A')}", key='respiratory_rate_checkbox', value=vs_data.get('respiratory_rate', False))
-        blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {vital_signs.get('blood_pressure', 'N/A')}", key='blood_pressure_checkbox', value=vs_data.get('blood_pressure', False))
-        pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {vital_signs.get('pulseox', 'N/A')}", key='pulseox_checkbox', value=vs_data.get('pulseox', False))
-        temperature_checkbox = st.checkbox(f"TEMPERATURE: {vital_signs.get('temperature', 'N/A')}", key='temperature_checkbox', value=vs_data.get('temperature', False))
-        weight_checkbox = st.checkbox(f"WEIGHT: {vital_signs.get('weight', 'N/A')}", key='weight_checkbox', value=vs_data.get('weight', False))
+        st.markdown("<h4 style='font-family: \"DejaVu Sans\"; font-size: 18px; margin: -20px 0 0 0;'>&nbsp;Of the following vital signs within the intake form, check the vital signs that are abnormal.</h4>", unsafe_allow_html=True)
+
+        col1, col2 = st.columns([1, 2])  # Define two columns
+
+        with col2:
+            st.markdown("<div style='margin-left: 20px;'>", unsafe_allow_html=True)
+
+            # Checkboxes for vital signs
+            heart_rate = vital_signs.get("heart_rate", "N/A")
+            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox', value=st.session_state.get('vs_data', {}).get('heart_rate', False))
+
+            respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
+            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox', value=st.session_state.get('vs_data', {}).get('respiratory_rate', False))
+
+            blood_pressure = vital_signs.get("blood_pressure", "N/A")
+            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox', value=st.session_state.get('vs_data', {}).get('blood_pressure', False))
+
+            pulseox = vital_signs.get("pulseox", "N/A")
+            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox', value=st.session_state.get('vs_data', {}).get('pulseox', False))
+
+            temperature = vital_signs.get("temperature", "N/A")
+            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox', value=st.session_state.get('vs_data', {}).get('temperature', False))
+
+            weight = vital_signs.get("weight", "N/A")
+            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox', value=st.session_state.get('vs_data', {}).get('weight', False))
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         # Button to proceed to the diagnoses page
         if st.button("Next", key="intake_next_button"):
@@ -55,41 +79,20 @@ def display_intake_form(db, document_id):
                 'weight': weight_checkbox,
             }
 
-            entry = {'vs_data': st.session_state.vs_data}
+            print(st.session_state.vs_data) 
+            
+            session_data = collect_session_data()
 
-            # Upload to Firebase
+            entry = {'vs_data': st.session_state.vs_data}  # This assumes you want to upload vs_data
+
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.intake_submitted = True
+            
             st.session_state.page = "diagnoses"  # Move to Diagnoses page
             
             st.rerun()  # Rerun the app to refresh the page
+
     else:
         st.error("No vital signs data available.")
-
-def main():
-    # Initialize Firebase
-    db = initialize_firebase()
-
-    # Session state initialization
-    if "user_code" not in st.session_state:
-        st.session_state.user_code = None
-    if "user_name" not in st.session_state:
-        st.session_state.user_name = "Guest"
-    if "page" not in st.session_state:
-        st.session_state.page = "welcome"
-
-    # Load last page or proceed
-    if st.session_state.user_code:
-        user_data = load_user_data(db)
-        if user_data:
-            st.session_state.user_name = user_data.get("user_name", "Guest")
-            st.session_state.vs_data = user_data.get("vs_data", {})
-
-    # Page routing based on session state
-    if st.session_state.page == "intake_form":
-        display_intake_form(db, st.session_state.document_id)
-
-if __name__ == "__main__":
-    main()
 
