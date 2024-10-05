@@ -35,7 +35,7 @@ def load_user_data(db):
 def main():
     # Initialize Firebase
     db = initialize_firebase()
-    
+
     # Initialize session state
     if "unique_code" not in st.session_state:
         st.session_state.unique_code = None
@@ -45,9 +45,9 @@ def main():
         
     if "page" not in st.session_state:
         st.session_state.page = "welcome"
-    
+
     if "document_id" not in st.session_state:
-        st.session_state.document_id = None   
+        st.session_state.document_id = None    
 
     # Load user data if unique_code is set
     if st.session_state.unique_code:
@@ -58,7 +58,6 @@ def main():
                 st.session_state[key] = value
             # Debug statement
             st.write("User data loaded into session state:", st.session_state)
-
 
     # Page routing
     if st.session_state.page == "welcome":
@@ -99,4 +98,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
