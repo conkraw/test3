@@ -25,33 +25,20 @@ from utils.firebase_operations import initialize_firebase, upload_to_firebase
 from utils.session_management import collect_session_data
 
 def load_user_data(db):
-    """Load user data from Firebase and store it in session state."""
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    if st.session_state.user_code:
-        user_data = db.collection(collection_name).document(st.session_state.user_code).get()
+    if st.session_state.unique_code:
+        user_data = db.collection(collection_name).document(st.session_state.unique_code).get()
         if user_data.exists:
-            user_data_dict = user_data.to_dict()
-            # Store all user data in session state
-            for key, value in user_data_dict.items():
-                st.session_state[key] = value
-
-            # Debug statement to check if unique_code is in session state
-            if "unique_code" in st.session_state:
-                st.write("Unique Code and associated data loaded into session state:")
-                st.write(f"Unique Code: {st.session_state.unique_code}")
-                for key, value in st.session_state.items():
-                    if key.startswith("unique_code") or key in user_data_dict:
-                        st.write(f"{key}: {value}")
-            else:
-                st.write("No unique_code found in session state.")
+            return user_data.to_dict()
+    return {}
 
 def main():
     # Initialize Firebase
     db = initialize_firebase()
     
     # Initialize session state
-    if "user_code" not in st.session_state:
-        st.session_state.user_code = None
+    if "unique_code" not in st.session_state:
+        st.session_state.unique_code = None
         
     if "user_name" not in st.session_state:
         st.session_state.user_name = None  # Initialize user_name
@@ -62,8 +49,15 @@ def main():
     if "document_id" not in st.session_state:
         st.session_state.document_id = None   
 
+    # Load user data if unique_code is set
     if st.session_state.unique_code:
-        load_user_data(db)
+        user_data = load_user_data(db)
+        if user_data:
+            # Assign user data to session state
+            for key, value in user_data.items():
+                st.session_state[key] = value
+            # Debug statement
+            st.write("User data loaded into session state:", st.session_state)
 
 
     # Page routing
