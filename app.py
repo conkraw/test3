@@ -50,14 +50,19 @@ def main():
         st.session_state.document_id = None    
 
     # Load user data if unique_code is set
+    
     if st.session_state.unique_code:
         user_data = load_user_data(db)
         if user_data:
             # Assign user data to session state
             for key, value in user_data.items():
                 st.session_state[key] = value
-            # Debug statement
-            st.write("User data loaded into session state:", st.session_state)
+            
+            # Debug statement using st.markdown for better visibility
+            st.markdown("### User data loaded into session state:")
+            st.markdown(f"```json\n{user_data}\n```")
+            st.markdown("### Full session state:")
+            st.markdown(f"```json\n{st.session_state}\n```")
 
     # Page routing
     if st.session_state.page == "welcome":
