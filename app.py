@@ -90,6 +90,7 @@ def main():
         display_intake_form(db, st.session_state.document_id)
         save_user_state(db) 
     elif st.session_state.page == "diagnoses":
+        st.write("Navigating to Diagnoses page...")
         display_diagnoses(db,st.session_state.document_id)
         save_user_state(db) 
     elif st.session_state.page == "Intervention Entry":
