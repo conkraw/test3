@@ -115,7 +115,7 @@ def run_virtual_patient(db, document_id):
                 st.session_state.session_data['responses'].append(virtual_patient_response)
 
                 # Clear the input field
-                st.experimental_rerun()
+                st.rerun()
 
                 # Display the new response
                 st.write(f"Virtual Patient: {virtual_patient_response}")
