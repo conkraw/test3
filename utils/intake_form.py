@@ -92,15 +92,25 @@ def display_intake_form(db, document_id):
         # Button to proceed to the diagnoses page
         if st.button("Next", key="intake_next_button"):
             entry = {
-                'vs_data': st.session_state.vs_data,
+                'vs_data': {
+                    'heart_rate': heart_rate_checkbox,
+                    'respiratory_rate': respiratory_rate_checkbox,
+                    'blood_pressure': blood_pressure_checkbox,
+                    'pulseox': pulseox_checkbox,
+                    'temperature': temperature_checkbox,
+                    'weight': weight_checkbox,
+                },
                 'last_page': 'intake_form'  # This assumes you want to upload vs_data
             }
-
-            upload_message = upload_to_firebase(db, document_id, entry)
-
+        
+            try:
+                upload_message = upload_to_firebase(db, document_id, entry)
+                st.success("Data uploaded successfully!")  # Success message
+            except Exception as e:
+                st.error(f"Error uploading data: {e}")  # Error message
+        
             st.session_state.intake_submitted = True
             st.session_state.page = "diagnoses"  # Move to Diagnoses page
-
             st.rerun()  # Rerun the app to refresh the page
     else:
         st.error("No vital signs data available.")
