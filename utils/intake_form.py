@@ -52,22 +52,22 @@ def display_intake_form(db, document_id):
 
             # Checkboxes for vital signs with prefilled values if available
             heart_rate = vital_signs.get("heart_rate", "N/A")
-            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate} beats per minute", key='heart_rate_checkbox', value=existing_data.get("vs_data", {}).get("heart_rate", False))
+            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox', value=existing_data.get("vs_data", {}).get("heart_rate", False))
             
             respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
-            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate} breaths per minute", key='respiratory_rate_checkbox', value=existing_data.get("vs_data", {}).get("respiratory_rate", False))
+            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox', value=existing_data.get("vs_data", {}).get("respiratory_rate", False))
             
             blood_pressure = vital_signs.get("blood_pressure", "N/A")
-            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure} mmHg", key='blood_pressure_checkbox', value=existing_data.get("vs_data", {}).get("blood_pressure", False))
+            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox', value=existing_data.get("vs_data", {}).get("blood_pressure", False))
             
             pulseox = vital_signs.get("pulseox", "N/A")
-            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}%", key='pulseox_checkbox', value=existing_data.get("vs_data", {}).get("pulseox", False))
+            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox', value=existing_data.get("vs_data", {}).get("pulseox", False))
             
             temperature = vital_signs.get("temperature", "N/A")
-            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature} °F", key='temperature_checkbox', value=existing_data.get("vs_data", {}).get("temperature", False))
+            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox', value=existing_data.get("vs_data", {}).get("temperature", False))
             
             weight = vital_signs.get("weight", "N/A")
-            weight_checkbox = st.checkbox(f"WEIGHT: {weight} lbs", key='weight_checkbox', value=existing_data.get("vs_data", {}).get("weight", False))
+            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox', value=existing_data.get("vs_data", {}).get("weight", False))
 
             st.markdown("</div>", unsafe_allow_html=True)
 
