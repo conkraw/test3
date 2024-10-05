@@ -41,7 +41,7 @@ def main():
         st.session_state.unique_code = None
         
     if "user_name" not in st.session_state:
-        st.session_state.user_name = None  # Initialize user_name
+        st.session_state.user_name = None
         
     if "page" not in st.session_state:
         st.session_state.page = "welcome"
@@ -51,21 +51,20 @@ def main():
 
     # Load user data if unique_code is set
     if st.session_state.unique_code:
+        st.markdown("### Attempting to load user data...")
         user_data = load_user_data(db)
         if user_data:
+            st.markdown("### User data retrieved:")
+            st.markdown(f"```json\n{user_data}\n```")
             # Assign user data to session state
             for key, value in user_data.items():
                 st.session_state[key] = value
             
-            # Debug statement using st.markdown for better visibility
-            st.markdown("### User Data Loaded into Session State:")
-            st.markdown("```json")
-            st.markdown(f"{user_data}")
-            st.markdown("```")
-            st.markdown("### Full Session State:")
-            st.markdown("```json")
-            st.markdown(f"{st.session_state}")
-            st.markdown("```")
+            # Debug statement for session state
+            st.markdown("### Full session state after loading user data:")
+            st.markdown("```json\n" + str(st.session_state) + "\n```")
+        else:
+            st.markdown("### No user data found for the unique code.")
 
     # Page routing
     if st.session_state.page == "welcome":
