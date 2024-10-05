@@ -5,7 +5,7 @@ from docx import Document
 import time
 import random
 from utils.session_management import collect_session_data
-from utils.firebase_operations import upload_to_firebase  
+from utils.firebase_operations import upload_to_firebase
 
 def read_croup_doc():
     doc = Document("croup.docx")
@@ -42,7 +42,16 @@ def get_chatgpt_response(user_input):
     else:
         return random.choice(alternative_responses)
 
-def run_virtual_patient(db,document_id):
+def load_existing_data(db, document_id):
+    """Load existing questions and responses from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    
+    if user_data.exists:
+        return user_data.to_dict().get("questions_asked", []), user_data.to_dict().get("responses", [])
+    return [], []
+
+def run_virtual_patient(db, document_id):
     st.title("Virtual Patient")
 
     st.info(
@@ -58,6 +67,11 @@ def run_virtual_patient(db,document_id):
             'questions_asked': [],
             'responses': []
         }
+
+    # Load existing data from Firebase
+    existing_questions, existing_responses = load_existing_data(db, document_id)
+    st.session_state.session_data['questions_asked'].extend(existing_questions)
+    st.session_state.session_data['responses'].extend(existing_responses)
 
     elapsed_time = (time.time() - st.session_state.start_time) / 60
 
@@ -87,7 +101,6 @@ def run_virtual_patient(db,document_id):
 
                 # Upload to Firebase
                 try:
-                    #upload_message = upload_to_firebase(db, 'your_collection_name', document_id, entry)  # Provide a document ID
                     upload_message = upload_to_firebase(db, document_id, entry)
                     st.success("Your questions have been saved successfully.")
                 except Exception as e:
@@ -96,14 +109,13 @@ def run_virtual_patient(db,document_id):
     else:
         st.warning("Session time is up. Please end the session.")
 
-    if st.button("End History Taking Session",key="end_session_button"):
+    if st.button("End History Taking Session", key="end_session_button"):
         entry = collect_session_data()  # Collect session data
         entry['questions_asked'] = st.session_state.session_data['questions_asked']
         entry['responses'] = st.session_state.session_data['responses']
         
         # Upload to Firebase
         try:
-            #upload_message = upload_to_firebase(db, 'your_collection_name', document_id, entry)  # Provide a document ID
             upload_message = upload_to_firebase(db, document_id, entry)
             st.success("Your questions have been saved successfully.")
         except Exception as e:
