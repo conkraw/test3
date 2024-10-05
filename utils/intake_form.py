@@ -1,10 +1,9 @@
 import streamlit as st
 from utils.file_operations import read_text_file, load_vital_signs
-from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase
 
 def display_intake_form(db, document_id):
-    st.markdown(f"<h3 style='font-family: \"DejaVu Sans\";'>Welcome {st.session_state.user_name}! Here is the intake form.</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='font-family: \"DejaVu Sans\";'>Welcome! Here is the intake form.</h3>", unsafe_allow_html=True)
 
     # Read and display the text from ptinfo.txt
     txt_file_path = "ptinfo.txt"
@@ -48,22 +47,22 @@ def display_intake_form(db, document_id):
 
             # Checkboxes for vital signs
             heart_rate = vital_signs.get("heart_rate", "N/A")
-            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox', value=st.session_state.get('vs_data', {}).get('heart_rate', False))
+            heart_rate_checkbox = st.checkbox(f"HEART RATE: {heart_rate}", key='heart_rate_checkbox')
 
             respiratory_rate = vital_signs.get("respiratory_rate", "N/A")
-            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox', value=st.session_state.get('vs_data', {}).get('respiratory_rate', False))
+            respiratory_rate_checkbox = st.checkbox(f"RESPIRATORY RATE: {respiratory_rate}", key='respiratory_rate_checkbox')
 
             blood_pressure = vital_signs.get("blood_pressure", "N/A")
-            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox', value=st.session_state.get('vs_data', {}).get('blood_pressure', False))
+            blood_pressure_checkbox = st.checkbox(f"BLOOD PRESSURE: {blood_pressure}", key='blood_pressure_checkbox')
 
             pulseox = vital_signs.get("pulseox", "N/A")
-            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox', value=st.session_state.get('vs_data', {}).get('pulseox', False))
+            pulseox_checkbox = st.checkbox(f"PULSE OXIMETRY: {pulseox}", key='pulseox_checkbox')
 
             temperature = vital_signs.get("temperature", "N/A")
-            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox', value=st.session_state.get('vs_data', {}).get('temperature', False))
+            temperature_checkbox = st.checkbox(f"TEMPERATURE: {temperature}", key='temperature_checkbox')
 
             weight = vital_signs.get("weight", "N/A")
-            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox', value=st.session_state.get('vs_data', {}).get('weight', False))
+            weight_checkbox = st.checkbox(f"WEIGHT: {weight}", key='weight_checkbox')
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -79,18 +78,12 @@ def display_intake_form(db, document_id):
                 'weight': weight_checkbox,
             }
 
-            print(st.session_state.vs_data) 
-            
-            session_data = collect_session_data()
-
-            entry = {'vs_data': st.session_state.vs_data}  # This assumes you want to upload vs_data
-
+            # Upload vital signs data to Firebase
+            entry = {'vs_data': st.session_state.vs_data}
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.intake_submitted = True
-            
             st.session_state.page = "diagnoses"  # Move to Diagnoses page
-            
             st.rerun()  # Rerun the app to refresh the page
 
     else:
