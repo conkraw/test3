@@ -60,7 +60,11 @@ def main():
         st.session_state.page = "welcome"
     
     if "document_id" not in st.session_state:
-        st.session_state.document_id = None    
+        st.session_state.document_id = None   
+
+    if st.session_state.unique_code:
+        load_user_data(db)
+
 
     # Page routing
     if st.session_state.page == "welcome":
