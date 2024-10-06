@@ -68,8 +68,8 @@ def display_laboratory_tests(db, document_id):
         st.subheader("Reorder Diagnoses")
 
         # Debugging information
-        st.write("Current selected moving diagnosis:", st.session_state.selected_moving_diagnosis)
-        st.write("Available diagnoses:", st.session_state.diagnoses)
+        #st.write("Current selected moving diagnosis:", st.session_state.selected_moving_diagnosis)
+        #st.write("Available diagnoses:", st.session_state.diagnoses)
 
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
