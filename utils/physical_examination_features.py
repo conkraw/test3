@@ -24,14 +24,15 @@ def display_physical_examination_features(db, document_id):
         st.session_state.physical_examination_features = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
         st.session_state.selected_moving_diagnosis = ""  
+    if 'dropdown_defaults' not in st.session_state:
+        st.session_state.dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Initialize dropdown defaults
 
     # Load diagnoses from file
     dx_options = read_diagnoses_from_file()
     dx_options.insert(0, "")  
 
     st.title("Physical Examination Illness Script")
-
-    st.markdown("""Please provide up to 5 physical examination features that influence the differential diagnosis.""")
+    st.markdown("Please provide up to 5 physical examination features that influence the differential diagnosis.")
 
     # Reorder section in the sidebar
     with st.sidebar:
@@ -94,8 +95,9 @@ def display_physical_examination_features(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            # Pre-fill text input with existing value
             st.session_state.physical_examination_features[i] = st.text_input(
-                f"",
+                f"Physical Feature {i + 1}",
                 value=st.session_state.physical_examination_features[i],
                 key=f"phys_row_{i}",
                 label_visibility="collapsed"
@@ -104,7 +106,6 @@ def display_physical_examination_features(db, document_id):
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
                 dropdown_defaults = st.session_state.dropdown_defaults.get(diagnosis, [""])
-                # Ensure the index exists before accessing it
                 if i < len(dropdown_defaults):
                     index = ["", "Supports", "Does not support"].index(dropdown_defaults[i]) if dropdown_defaults[i] in ["", "Supports", "Does not support"] else 0
                 else:
@@ -124,11 +125,11 @@ def display_physical_examination_features(db, document_id):
         if not any(st.session_state.physical_examination_features):
             st.error("Please enter at least one physical examination feature.")
         else:
-            pefeatures = {}  # Change from assessments to pefeatures
+            pefeatures = {}  # Store physical examination features
             for i in range(5):
                 for diagnosis in st.session_state.diagnoses:
                     assessment = st.session_state[f"select_{i}_{diagnosis}_phys"]
-                    if diagnosis not in pefeatures:  # Change from assessments to pefeatures
+                    if diagnosis not in pefeatures:
                         pefeatures[diagnosis] = []
                     pefeatures[diagnosis].append({
                         'physical_feature': st.session_state.physical_examination_features[i],
@@ -149,3 +150,4 @@ def display_physical_examination_features(db, document_id):
             st.session_state.page = "Laboratory Tests"  # Change to the Simple Success page
             st.success("Physical examination features submitted successfully.")
             st.rerun()  # Rerun to update the app
+
