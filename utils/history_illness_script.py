@@ -22,6 +22,9 @@ def load_historical_features_from_firebase(db, document_id):
             if diagnosis in st.session_state.diagnoses:
                 idx = st.session_state.diagnoses.index(diagnosis)
                 # Load historical features into session state
+                # Ensure the list has enough entries to avoid IndexError
+                while len(st.session_state.historical_features) <= idx:
+                    st.session_state.historical_features.append("")
                 st.session_state.historical_features[idx] = [feature['historical_feature'] for feature in features]
 
 def main(db, document_id):
@@ -33,7 +36,7 @@ def main(db, document_id):
     if 'diagnoses_s2' not in st.session_state:  # Initialize diagnoses_s2
         st.session_state.diagnoses_s2 = [""] * 5  
     if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = [""] * 5
+        st.session_state.historical_features = [[] for _ in range(5)]  # Initialize as lists for multiple features
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
@@ -119,9 +122,11 @@ def main(db, document_id):
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
+                # Display historical feature for each diagnosis
+                historical_feature_value = st.session_state.historical_features[i][0] if i < len(st.session_state.historical_features) and st.session_state.historical_features[i] else ""
                 st.session_state.historical_features[i] = st.text_input(
                     f"", 
-                    value=st.session_state.historical_features[i][0] if i < len(st.session_state.historical_features) and st.session_state.historical_features[i] else "",  # Load historical feature
+                    value=historical_feature_value,
                     key=f"hist_row_{i}", 
                     label_visibility="collapsed"
                 )
