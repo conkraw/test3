@@ -34,24 +34,23 @@ def load_laboratory_tests(db, document_id):
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
         st.write("Fetched Lab Tests from Firebase:", lab_tests)  # Debugging output
 
-        # Initialize a dictionary to keep track of tests already assigned to avoid overwriting
-        test_assigned = {i: None for i in range(5)}
+        # Initialize a list to track tests seen for assigning to lab_rows
+        seen_tests = {i: None for i in range(5)}
 
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
-                    # Populate lab rows and dropdown defaults
-                    if test['laboratory_test']:
-                        lab_rows[i] = test['laboratory_test']
-                        dropdown_defaults[diagnosis][i] = test.get('assessment', "")
-                        test_assigned[i] = test['laboratory_test']
+                    lab_test = test['laboratory_test']
+                    assessment = test.get('assessment', "")
+                    
+                    # Populate lab_rows and dropdown_defaults if test is not already assigned
+                    if lab_test:
+                        if seen_tests[i] is None:
+                            lab_rows[i] = lab_test  # Only assign if not already set
+                            seen_tests[i] = lab_test
 
-        # After processing all diagnoses, ensure dropdown defaults are aligned with lab_rows
-        for diagnosis in dropdown_defaults.keys():
-            for i in range(5):
-                if lab_rows[i] in test_assigned.values():
-                    dropdown_defaults[diagnosis][i] = dropdown_defaults[diagnosis][i] if dropdown_defaults[diagnosis][i] else ""
+                        dropdown_defaults[diagnosis][i] = assessment
 
     # Log the resulting lab_rows and dropdown_defaults for verification
     st.write("Lab Rows after loading:", lab_rows)  # Debugging output
