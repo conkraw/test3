@@ -11,15 +11,14 @@ def load_existing_examination(db, document_id):
         return user_data.to_dict().get("excluded_exams", []), user_data.to_dict().get("confirmed_exams", [])
     return [], []
 
-
 def display_focused_physical_examination(db, document_id):
     st.title("Focused Physical Examination Selection")
 
     # Load existing examination selections into session state if not already present
     if 'excluded_exams' not in st.session_state or 'confirmed_exams' not in st.session_state:
-        existing_examinations = load_existing_examination(db, document_id)
-        st.session_state.excluded_exams = existing_examinations.get("excluded_exams", [])
-        st.session_state.confirmed_exams = existing_examinations.get("confirmed_exams", [])
+        excluded_exams, confirmed_exams = load_existing_examination(db, document_id)
+        st.session_state.excluded_exams = excluded_exams
+        st.session_state.confirmed_exams = confirmed_exams
 
     # Define options for examination
     options1 = [
