@@ -27,8 +27,7 @@ def load_laboratory_tests(db, document_id):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     user_data = db.collection(collection_name).document(document_id).get()
     
-    #lab_rows = [""] * 5  # Default to empty for 5 tests
-    lab_rows = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
+    lab_rows = [""] * 5  # Default to empty for 5 tests
     dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
 
     if user_data.exists:
@@ -39,7 +38,7 @@ def load_laboratory_tests(db, document_id):
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
                     if test['laboratory_test']:
-                        lab_rows[diagnosis][i] = test['laboratory_test']  # Populate lab rows directly
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
