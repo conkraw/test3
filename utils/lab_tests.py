@@ -24,7 +24,7 @@ def load_laboratory_tests(db, document_id):
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     user_data = db.collection(collection_name).document(document_id).get()
     
-    lab_rows = [""] * 5  
+    lab_rows = [""] * 5  # Initialize with empty strings
     dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}
 
     if user_data.exists:
@@ -32,11 +32,10 @@ def load_laboratory_tests(db, document_id):
         
         for diagnosis in st.session_state.diagnoses:
             tests = lab_tests.get(diagnosis, [])
-            for i in range(len(tests)):
-                if i < 5:  
-                    if tests[i]['laboratory_test']:
-                        lab_rows[i] = tests[i]['laboratory_test']  
-                    dropdown_defaults[diagnosis][i] = tests[i]['assessment']  
+            for i in range(5):  # Fixed to always run for 5 tests
+                if i < len(tests):  # Check if there's a test for this index
+                    lab_rows[i] = tests[i]['laboratory_test']  # Directly assign
+                    dropdown_defaults[diagnosis][i] = tests[i]['assessment']  # Directly assign
 
     return lab_rows, dropdown_defaults
 
@@ -57,9 +56,9 @@ def display_laboratory_tests(db, document_id):
     st.title("Laboratory Tests")
     st.markdown("Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.")
 
-    # Sidebar for reordering and changing diagnoses (remains unchanged)
+    # Sidebar for reordering and changing diagnoses
     with st.sidebar:
-        # Reorder and change diagnosis code remains unchanged
+        # Sidebar code remains unchanged...
 
     # Display laboratory tests
     for i in range(5):
@@ -68,7 +67,7 @@ def display_laboratory_tests(db, document_id):
             lab_test_options = read_lab_tests_from_file()
             selected_lab_test = st.selectbox(
                 f"Test for row {i + 1}",
-                options=lab_test_options,  # No blank option here
+                options=lab_test_options,
                 index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else -1),  # Use -1 for not found
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
@@ -114,4 +113,5 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  
             st.success("Laboratory tests submitted successfully.")
             st.rerun()
+
 
