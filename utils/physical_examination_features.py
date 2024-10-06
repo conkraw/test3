@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.session_management import collect_session_data  #######NEED THIS
+from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -16,12 +16,13 @@ def load_physical_examination_features(db, document_id):
     """Load existing physical examination features from Firebase."""
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     user_data = db.collection(collection_name).document(document_id).get()
+    
     if user_data.exists:
         pefeatures = user_data.to_dict().get('pefeatures', {})
         physical_features = [""] * 5  # Default to empty for 5 features
         dropdown_defaults = {diagnosis: [""] * 5 for diagnosis in pefeatures}  # Prepare default dropdowns
         
-        # Populate physical features based on your structure
+        # Populate physical features and dropdowns based on Firebase data
         for diagnosis, features in pefeatures.items():
             for i, feature in enumerate(features):
                 if i < len(physical_features):  # Ensure we stay within bounds
@@ -38,7 +39,7 @@ def display_physical_examination_features(db, document_id):
         st.session_state.current_page = "physical_examination_features"
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
-    if 'diagnoses_s3' not in st.session_state:  # Initialize diagnoses_s3
+    if 'diagnoses_s3' not in st.session_state:
         st.session_state.diagnoses_s3 = [""] * 5  
     if 'physical_examination_features' not in st.session_state:
         st.session_state.physical_examination_features, st.session_state.dropdown_defaults = load_physical_examination_features(db, document_id)
@@ -79,7 +80,7 @@ def display_physical_examination_features(db, document_id):
                 st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
 
             # Update diagnoses_s3 after moving
-            st.session_state.diagnoses_s3 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+            st.session_state.diagnoses_s3 = [dx for dx in st.session_state.diagnoses if dx]
 
         # Change a diagnosis section
         st.subheader("Change a Diagnosis")
