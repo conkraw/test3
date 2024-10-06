@@ -33,12 +33,11 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
+        # Populate lab_rows and dropdown_defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
-                    if test['laboratory_test']:
-                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
@@ -66,11 +65,6 @@ def display_laboratory_tests(db, document_id):
     # Reorder section in the sidebar
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
-
-        # Debugging information
-        #st.write("Current selected moving diagnosis:", st.session_state.selected_moving_diagnosis)
-        #st.write("Available diagnoses:", st.session_state.diagnoses)
-
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
@@ -149,8 +143,7 @@ def display_laboratory_tests(db, document_id):
 
     # Submit button for laboratory tests
     if st.button("Submit", key="labtests_submit_button"):
-        lab_tests_data = {}  # Store lab tests and assessments
-        # Check if at least one laboratory test is selected
+        lab_tests_data = {}
         if not any(st.session_state[f"lab_row_{i}"] for i in range(5)):
             st.error("Please select at least one laboratory test.")
         else:
@@ -164,17 +157,16 @@ def display_laboratory_tests(db, document_id):
                         'assessment': assessment
                     })
 
-            # Set diagnoses_s4 to the current state of diagnoses
             st.session_state.diagnoses_s4 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
-                'laboratory_tests': lab_tests_data,  # Include laboratory tests data
-                'diagnoses_s4': st.session_state.diagnoses_s4  # Include diagnoses_s4 in the entry
+                'laboratory_tests': lab_tests_data,
+                'diagnoses_s4': st.session_state.diagnoses_s4
             }
 
-            # Upload to Firebase using the current diagnosis order
             upload_message = upload_to_firebase(db, document_id, entry)
             
-            st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
+            st.session_state.page = "Radiology Tests"
             st.success("Laboratory tests submitted successfully.")
             st.rerun()  # Rerun to update the app
+
