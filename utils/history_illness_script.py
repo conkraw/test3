@@ -127,7 +127,7 @@ def main(db, document_id):
                 
                 # Set index safely
                 selected_hxfeature = next((hx['hxfeature'] for hx in existing_hxfeatures if hx['historical_feature'] == default_historical_feature), "")
-                index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0  # Default to 0 if not found
+                index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0
 
                 st.selectbox(
                     "hxfeatures for " + diagnosis,
