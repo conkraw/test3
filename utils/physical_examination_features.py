@@ -32,7 +32,7 @@ def load_physical_examination_features(db, document_id):
     else:
         return [""] * 5, {}  # Default to empty if no data
 
-def main(db, document_id):
+def display_physical_examination_features (db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = "physical_examination_features"
