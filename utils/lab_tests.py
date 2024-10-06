@@ -121,7 +121,6 @@ def display_laboratory_tests(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
-            # Prefill with existing values from session state
             selected_lab_test = st.selectbox(
                 f"",
                 options=[""] + lab_tests,
@@ -134,11 +133,14 @@ def display_laboratory_tests(db, document_id):
             with col:
                 # Safely get dropdown default value
                 dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
-                index = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"].index(dropdown_value) if dropdown_value in ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"] else 0
+                assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
+                
+                # Set index for the dropdown
+                index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
 
                 st.selectbox(
                     "Assessment for " + diagnosis,
-                    options=["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"],
+                    options=assessment_options,
                     index=index,
                     key=f"select_{i}_{diagnosis}_lab",
                     label_visibility="collapsed"
