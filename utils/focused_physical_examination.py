@@ -8,18 +8,17 @@ def load_existing_examination(db, document_id):
     user_data = db.collection(collection_name).document(document_id).get()
 
     if user_data.exists:
-        # Debugging output to check what is retrieved
-        st.write("Loaded data from Firebase:", user_data.to_dict())
         return user_data.to_dict().get("examinations", {})
     return {"excluded_exams": [], "confirmed_exams": []}
 
 def display_focused_physical_examination(db, document_id):
     st.title("Focused Physical Examination Selection")
 
-    # Load existing examination selections
-    existing_examinations = load_existing_examination(db, document_id)
-    selected_exams1 = existing_examinations.get("excluded_exams", [])
-    selected_exams2 = existing_examinations.get("confirmed_exams", [])
+    # Initialize the session state for excluded and confirmed exams if not present
+    if 'excluded_exams' not in st.session_state:
+        existing_examinations = load_existing_examination(db, document_id)
+        st.session_state.excluded_exams = existing_examinations.get("excluded_exams", [])
+        st.session_state.confirmed_exams = existing_examinations.get("confirmed_exams", [])
 
     # Define options for examination
     options1 = [
@@ -31,22 +30,22 @@ def display_focused_physical_examination(db, document_id):
 
     # Prompt for excluding hypotheses
     st.markdown("<h5>Please select the parts of physical examination required, in order to exclude some unlikely, but important hypotheses:</h5>", unsafe_allow_html=True)
-    selected_exams1 = st.multiselect("Select options:", options1, default=selected_exams1, key="exclude_exams")
+    st.session_state.excluded_exams = st.multiselect("Select options:", options1, default=st.session_state.excluded_exams, key="exclude_exams")
 
     # Prompt for confirming hypotheses
     st.markdown("<h5>Please select examinations necessary to confirm the most likely hypothesis and to discriminate between others:</h5>", unsafe_allow_html=True)
-    selected_exams2 = st.multiselect("Select options:", options1, default=selected_exams2, key="confirm_exams")
+    st.session_state.confirmed_exams = st.multiselect("Select options:", options1, default=st.session_state.confirmed_exams, key="confirm_exams")
     
     if st.button("Submit", key="focused_pe_submit_button"):
         # Ensure both selections have been made
-        if not selected_exams1:
+        if not st.session_state.excluded_exams:
             st.error("Please select at least one examination that will allow you to exclude some unlikely, but important hypotheses.")
-        elif not selected_exams2:
+        elif not st.session_state.confirmed_exams:
             st.error("Please select at least one examination to confirm the most likely hypothesis and to discriminate between others.")
         else:
             entry = {
-                'excluded_exams': selected_exams1,
-                'confirmed_exams': selected_exams2,
+                'excluded_exams': st.session_state.excluded_exams,
+                'confirmed_exams': st.session_state.confirmed_exams,
             }
 
             # Collect session data
