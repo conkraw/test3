@@ -2,7 +2,6 @@ import streamlit as st
 from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase
 
-# Function to read diagnoses from a file
 def read_diagnoses_from_file():
     try:
         with open('dx_list.txt', 'r') as file:
@@ -12,7 +11,6 @@ def read_diagnoses_from_file():
         st.error(f"Error reading dx_list.txt: {e}")
         return []
 
-# Function to load data from Firebase
 def load_data_from_firebase(db, document_id):
     if 'diagnoses_s2' not in st.session_state:
         collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
@@ -22,8 +20,8 @@ def load_data_from_firebase(db, document_id):
             data = user_data.to_dict()
             st.session_state.diagnoses_s2 = data.get('diagnoses_s2', [""] * 5)
             hxfeatures = data.get('hxfeatures', {})
-            
-            # Ensure historical features are correctly initialized
+
+            # Initialize historical features correctly
             st.session_state.historical_features = []
             for diagnosis in st.session_state.diagnoses_s2:
                 historical_info = hxfeatures.get(diagnosis, {})
@@ -51,6 +49,9 @@ def main(db, document_id):
     # Load data from Firebase
     load_data_from_firebase(db, document_id)
 
+    # Debugging: Print the current state of historical_features
+    st.write("Current historical features:", st.session_state.historical_features)
+
     # Title of the app
     st.title("Historical Features App")
 
@@ -76,7 +77,6 @@ def main(db, document_id):
                     key=f"hist_row_{i}", 
                     label_visibility="collapsed"
                 )
-                # Ensure we update the session state correctly
                 st.session_state.historical_features[i]['historical_feature'] = historical_feature_value
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
@@ -119,7 +119,7 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"
                 st.rerun()
 
-# Initialize your Firebase connection and document_id
+# Uncomment and replace with actual Firebase initialization
 # db = initialize_firebase()
 # document_id = "your_document_id"
 # main(db, document_id)
