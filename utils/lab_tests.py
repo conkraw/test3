@@ -28,20 +28,21 @@ def load_laboratory_tests(db, document_id):
     user_data = db.collection(collection_name).document(document_id).get()
     
     lab_rows = [""] * 5  # Default to empty for 5 tests
-    dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
-        for diagnosis, tests in lab_tests.items():
-            for i in range(min(len(tests), 5)):  # Ensure we stay within bounds
-                test = tests[i]
-                if 'laboratory_test' in test and test['laboratory_test']:
-                    lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
-                dropdown_defaults[diagnosis][i] = test.get('assessment', "")  # Use get to avoid KeyError
+        # Track how many slots have been filled
+        filled_slots = 0
 
-    return lab_rows, dropdown_defaults
+        # Iterate through each diagnosis and populate the lab_rows
+        for diagnosis, tests in lab_tests.items():
+            for test in tests:
+                if filled_slots < 5:  # Ensure we don't exceed the number of lab rows
+                    lab_rows[filled_slots] = test.get('laboratory_test', "")  # Fill lab rows in order
+                    filled_slots += 1  # Move to the next slot
+
+    return lab_rows
 
 
 def display_laboratory_tests(db, document_id):
