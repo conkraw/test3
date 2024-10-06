@@ -57,7 +57,7 @@ def display_laboratory_tests(db, document_id):
     st.markdown("Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.")
 
     # Sidebar for reordering and changing diagnoses
-     with st.sidebar:
+    with st.sidebar:
         st.subheader("Reorder Diagnoses")
 
         selected_diagnosis = st.selectbox(
@@ -154,5 +154,4 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  
             st.success("Laboratory tests submitted successfully.")
             st.rerun()
-
 
