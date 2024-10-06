@@ -78,7 +78,7 @@ def main(db, document_id):
                 hxfeature = st.selectbox(
                     f"Hxfeature for {diagnosis}",
                     options=hxfeature_options,
-                    index=hxfeature_options.index(st.session_state.historical_features.get(diagnosis, {}).get("hxfeature", "")),
+                    index=hxfeature_options.index(st.session_state.historical_features.get(diagnosis, {}).get("hxfeature", "")) if diagnosis in st.session_state.historical_features else 0,
                     key=f"select_{diagnosis}_hxfeature"
                 )
 
@@ -101,8 +101,11 @@ def main(db, document_id):
             st.session_state.current_page = "Next Page"  # Adjust as needed
             st.rerun()  # Rerun to update the app
 
-
-
+if __name__ == "__main__":
+    # Replace with your Firestore initialization code
+    # db = initialize_firestore() 
+    document_id = "your_document_id"  # Set this appropriately
+    main(db, document_id)
 
 
 
