@@ -1,5 +1,5 @@
-import streamlit as st 
-from utils.session_management import collect_session_data  
+import streamlit as st
+from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -32,31 +32,16 @@ def load_laboratory_tests(db, document_id):
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
-        
-        # Initialize a list to track seen lab tests
-        seen_tests = set()
 
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
-                lab_test = test['laboratory_test']
-                assessment = test.get('assessment', "")
-
                 if i < 5:  # Ensure we stay within bounds
-                    # If lab_test is present and not seen before, assign it to lab_rows
-                    if lab_test and lab_test not in seen_tests:
-                        lab_rows[i] = lab_test  # Assign the lab test
-                        seen_tests.add(lab_test)  # Mark it as seen
-
-                    # Assign the assessment for the diagnosis
-                    dropdown_defaults[diagnosis][i] = assessment
-
-    # Debugging output
-    st.write("Lab Rows after loading:", lab_rows)  # Debugging output
-    st.write("Dropdown Defaults after loading:", dropdown_defaults)  # Debugging output
+                    if test['laboratory_test']:
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
-
 
 def display_laboratory_tests(db, document_id):
     # Initialize session state
@@ -81,6 +66,7 @@ def display_laboratory_tests(db, document_id):
     # Reorder section in the sidebar
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
+
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
@@ -135,9 +121,11 @@ def display_laboratory_tests(db, document_id):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
+            # Add the blank option at the end
+            lab_test_options.append("")  # Add blank option at the end
             selected_lab_test = st.selectbox(
                 f"Test for row {i + 1}",
-                options=[""] + lab_test_options,
+                options=lab_test_options,
                 index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
@@ -159,7 +147,8 @@ def display_laboratory_tests(db, document_id):
 
     # Submit button for laboratory tests
     if st.button("Submit", key="labtests_submit_button"):
-        lab_tests_data = {}
+        lab_tests_data = {}  # Store lab tests and assessments
+        # Check if at least one laboratory test is selected
         if not any(st.session_state[f"lab_row_{i}"] for i in range(5)):
             st.error("Please select at least one laboratory test.")
         else:
@@ -173,16 +162,18 @@ def display_laboratory_tests(db, document_id):
                         'assessment': assessment
                     })
 
+            # Set diagnoses_s4 to the current state of diagnoses
             st.session_state.diagnoses_s4 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
-                'laboratory_tests': lab_tests_data,
-                'diagnoses_s4': st.session_state.diagnoses_s4
+                'laboratory_tests': lab_tests_data,  # Include laboratory tests data
+                'diagnoses_s4': st.session_state.diagnoses_s4  # Include diagnoses_s4 in the entry
             }
 
+            # Upload to Firebase using the current diagnosis order
             upload_message = upload_to_firebase(db, document_id, entry)
             
-            st.session_state.page = "Radiology Tests"
+            st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
             st.success("Laboratory tests submitted successfully.")
             st.rerun()  # Rerun to update the app
 
