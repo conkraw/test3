@@ -125,7 +125,7 @@ def main(db, document_id):
             with cols[0]:
                 # Populate text input with existing value from session state
                 st.session_state.historical_features[i] = st.text_input(
-                    f"",
+                    f"Feature {i + 1}",
                     value=st.session_state.historical_features[i],
                     key=f"hist_row_{i}",
                     label_visibility="collapsed"
@@ -133,11 +133,19 @@ def main(db, document_id):
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
-                    # Prefill the dropdowns with values from the loaded data
+                    # Safely retrieve the dropdown default value
+                    dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
+                    # Check if dropdown_value is in the list before accessing the index
+                    if dropdown_value in ["", "Supports", "Does not support"]:
+                        index = ["", "Supports", "Does not support"].index(dropdown_value)
+                    else:
+                        index = 0  # Default to the first option
+
+                    # Render the dropdown with the correct index selected
                     st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
-                        index=["", "Supports", "Does not support"].index(st.session_state.dropdown_defaults.get(diagnosis, [""])[i]),
+                        index=index,
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
