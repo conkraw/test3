@@ -18,10 +18,11 @@ def load_historical_features_from_firebase(db, document_id):
     user_data = db.collection(collection_name).document(document_id).get()
     if user_data.exists:
         hx_data = user_data.to_dict().get('hxfeatures', {})
-        for diagnosis in hx_data:
+        for diagnosis, features in hx_data.items():
             if diagnosis in st.session_state.diagnoses:
-                # Assuming hxfeature structure you want to populate
-                st.session_state.historical_features[st.session_state.diagnoses.index(diagnosis)] = hx_data[diagnosis]
+                idx = st.session_state.diagnoses.index(diagnosis)
+                # Load historical features into session state
+                st.session_state.historical_features[idx] = [feature['historical_feature'] for feature in features]
 
 def main(db, document_id):
     # Initialize session state
@@ -120,7 +121,7 @@ def main(db, document_id):
             with cols[0]:
                 st.session_state.historical_features[i] = st.text_input(
                     f"", 
-                    value=st.session_state.historical_features[i],  # Load from historical_features
+                    value=st.session_state.historical_features[i][0] if i < len(st.session_state.historical_features) and st.session_state.historical_features[i] else "",  # Load historical feature
                     key=f"hist_row_{i}", 
                     label_visibility="collapsed"
                 )
