@@ -30,13 +30,13 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
         
-        # Directly assign laboratory tests to lab_rows and dropdown defaults
         for diagnosis in st.session_state.diagnoses:
             tests = lab_tests.get(diagnosis, [])
-            for i in range(min(5, len(tests))):  # Ensure we don't go out of bounds
-                if tests[i]['laboratory_test']:
-                    lab_rows[i] = tests[i]['laboratory_test']  # Directly assign lab test
-                dropdown_defaults[diagnosis][i] = tests[i]['assessment']  # Set the assessment
+            for i in range(len(tests)):  # Directly use the length of tests
+                if i < 5:  # Ensure we do not exceed the lab_rows limit
+                    if tests[i]['laboratory_test']:
+                        lab_rows[i] = tests[i]['laboratory_test']  # Directly assign the lab test
+                    dropdown_defaults[diagnosis][i] = tests[i]['assessment']  # Set the assessment
 
     return lab_rows, dropdown_defaults
 
@@ -159,3 +159,4 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  
             st.success("Laboratory tests submitted successfully.")
             st.rerun()
+
