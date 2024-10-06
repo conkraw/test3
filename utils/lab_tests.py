@@ -22,23 +22,46 @@ def read_lab_tests_from_file():
         st.error(f"Error reading labtests.txt: {e}")
         return []
 
-def display_laboratory_tests(db, document_id):  # Updated to include db and document_id
+def load_laboratory_tests(db, document_id):
+    """Load existing laboratory tests from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    
+    lab_rows = [""] * 5  # Default to empty for 5 tests
+    dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
+
+    if user_data.exists:
+        lab_tests = user_data.to_dict().get('laboratory_tests', {})
+
+        # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
+        for diagnosis, tests in lab_tests.items():
+            for i, test in enumerate(tests):
+                if i < 5:  # Ensure we stay within bounds
+                    if test['laboratory_test']:
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
+
+    return lab_rows, dropdown_defaults
+
+def display_laboratory_tests(db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = "laboratory_tests"
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
-        st.session_state.selected_moving_diagnosis = ""  
+        st.session_state.selected_moving_diagnosis = ""
 
     # Load diagnoses and laboratory tests from files
     dx_options = read_diagnoses_from_file()
     lab_tests = read_lab_tests_from_file()
-    dx_options.insert(0, "")  
+    dx_options.insert(0, "")
+
+    # Load existing laboratory tests from Firebase
+    st.session_state.lab_rows, st.session_state.dropdown_defaults = load_laboratory_tests(db, document_id)
 
     st.title("Laboratory Tests")
-
-    st.markdown("""Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.""")
+    st.markdown("Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.")
 
     # Reorder section in the sidebar
     with st.sidebar:
@@ -97,24 +120,31 @@ def display_laboratory_tests(db, document_id):  # Updated to include db and docu
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            lab_test_options = read_lab_tests_from_file()
             selected_lab_test = st.selectbox(
-                f"",
-                options=[""] + lab_tests,
+                f"Test for {st.session_state.diagnoses[i]}",
+                options=[""] + lab_test_options,
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
+                assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
+                dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
+                index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
+
                 st.selectbox(
                     "Assessment for " + diagnosis,
-                    options=["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"],
+                    options=assessment_options,
+                    index=index,
                     key=f"select_{i}_{diagnosis}_lab",
                     label_visibility="collapsed"
                 )
 
     # Submit button for laboratory tests
-    if st.button("Submit",key="labtests_submit_button"):
+    if st.button("Submit", key="labtests_submit_button"):
         lab_tests_data = {}  # Store lab tests and assessments
         # Check if at least one laboratory test is selected
         if not any(st.session_state[f"lab_row_{i}"] for i in range(5)):
@@ -139,7 +169,6 @@ def display_laboratory_tests(db, document_id):  # Updated to include db and docu
             }
 
             # Upload to Firebase using the current diagnosis order
-            #upload_message = upload_to_firebase(db, 'your_collection_name', document_id, entry)
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
