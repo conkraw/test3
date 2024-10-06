@@ -38,7 +38,7 @@ def load_laboratory_tests(db, document_id):
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
                     if test['laboratory_test']:
-                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                        lab_rows[diagnosis][i] = test['laboratory_test']  # Populate lab rows directly
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
