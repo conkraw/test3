@@ -30,15 +30,17 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Iterate through each diagnosis and directly set lab rows and dropdown defaults
+        # Directly map lab tests to lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i in range(min(5, len(tests))):  # Fill only up to 5 tests
-                lab_rows[i] = tests[i]['laboratory_test']  # Directly set the laboratory test
+                if tests[i]['laboratory_test']:
+                    lab_rows[i] = tests[i]['laboratory_test']  # Directly set the laboratory test
                 dropdown_defaults[diagnosis][i] = tests[i]['assessment']  # Set the assessment
 
     return lab_rows, dropdown_defaults
 
 def display_laboratory_tests(db, document_id):
+    # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = "laboratory_tests"
     if 'diagnoses' not in st.session_state:
@@ -46,29 +48,69 @@ def display_laboratory_tests(db, document_id):
     if 'selected_moving_diagnosis' not in st.session_state:
         st.session_state.selected_moving_diagnosis = ""
 
+    # Load diagnoses and laboratory tests from files
     dx_options = read_diagnoses_from_file()
     lab_tests = read_lab_tests_from_file()
     dx_options.insert(0, "")
 
+    # Load existing laboratory tests from Firebase
     st.session_state.lab_rows, st.session_state.dropdown_defaults = load_laboratory_tests(db, document_id)
 
     st.title("Laboratory Tests")
     st.markdown("Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.")
 
-    cols = st.columns(len(st.session_state.diagnoses) + 1)
-    with cols[0]:
-        st.markdown("Laboratory Tests")
+    # Reorder section in the sidebar
+    with st.sidebar:
+        st.subheader("Reorder Diagnoses")
+        
+        selected_diagnosis = st.selectbox(
+            "Select a diagnosis to move",
+            options=st.session_state.diagnoses,
+            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            key="move_diagnosis"
+        )
 
-    for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
-        with col:
-            st.markdown(diagnosis)
+        move_direction = st.radio("Adjust Priority:", options=["Higher Priority", "Lower Priority"], key="move_direction")
 
+        if st.button("Adjust Priority"):
+            idx = st.session_state.diagnoses.index(selected_diagnosis)
+            if move_direction == "Higher Priority" and idx > 0:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx - 1] = (
+                    st.session_state.diagnoses[idx - 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx - 1]  
+            elif move_direction == "Lower Priority" and idx < len(st.session_state.diagnoses) - 1:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx + 1] = (
+                    st.session_state.diagnoses[idx + 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
+
+        # Change a diagnosis section
+        st.subheader("Change a Diagnosis")
+        change_diagnosis = st.selectbox(
+            "Select a diagnosis to change",
+            options=st.session_state.diagnoses,
+            key="change_diagnosis"
+        )
+
+        new_diagnosis_search = st.text_input("Search for a new diagnosis", "")
+        if new_diagnosis_search:
+            new_filtered_options = [dx for dx in dx_options if new_diagnosis_search.lower() in dx.lower() and dx not in st.session_state.diagnoses]
+            if new_filtered_options:
+                st.write("**Available Options:**")
+                for option in new_filtered_options:
+                    if st.button(f"{option}", key=f"select_new_{option}"):
+                        index_to_change = st.session_state.diagnoses.index(change_diagnosis)
+                        st.session_state.diagnoses[index_to_change] = option
+                        st.rerun()  
+
+    # Display laboratory tests
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
             selected_lab_test = st.selectbox(
-                f"Test for row {i + 1}",  # Clearly indicate the row number
+                f"Test for row {i + 1}",
                 options=[""] + lab_test_options,
                 index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
@@ -89,6 +131,7 @@ def display_laboratory_tests(db, document_id):
                     label_visibility="collapsed"
                 )
 
+    # Submit button for laboratory tests
     if st.button("Submit", key="labtests_submit_button"):
         lab_tests_data = {}
         if not any(st.session_state[f"lab_row_{i}"] for i in range(5)):
@@ -115,4 +158,3 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  
             st.success("Laboratory tests submitted successfully.")
             st.rerun()
-
