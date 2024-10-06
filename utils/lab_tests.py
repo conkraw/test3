@@ -35,7 +35,7 @@ def load_laboratory_tests(db, document_id):
         # Populate lab rows and dropdowns based on Firebase data
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
-                if i < len(lab_rows):  # Ensure we stay within bounds
+                if i < 5:  # Ensure we stay within bounds
                     lab_rows[i] = test['laboratory_test']
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
         
@@ -50,7 +50,7 @@ def display_laboratory_tests(db, document_id):
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
-        st.session_state.selected_moving_diagnosis = ""  
+        st.session_state.selected_moving_diagnosis = ""
 
     # Load diagnoses and laboratory tests from files
     dx_options = read_diagnoses_from_file()
@@ -121,10 +121,12 @@ def display_laboratory_tests(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            # Set the index for the lab test dropdown
+            lab_test_selected = st.session_state.lab_rows[i]
             selected_lab_test = st.selectbox(
                 f"",
                 options=[""] + lab_tests,
-                index=lab_tests.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_tests else 0,
+                index=lab_tests.index(lab_test_selected) if lab_test_selected in lab_tests else 0,
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
