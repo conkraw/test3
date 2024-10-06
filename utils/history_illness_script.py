@@ -139,26 +139,33 @@ def main(db, document_id):
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                st.session_state.historical_features[i]['historical_feature'] = st.text_input(
+                historical_feature_value = st.text_input(
                     f"", 
-                    value=st.session_state.historical_features[i]['historical_feature'], 
+                    value=st.session_state.historical_features[i]['historical_feature'] if isinstance(st.session_state.historical_features[i], dict) else "", 
                     key=f"hist_row_{i}", 
                     label_visibility="collapsed"
                 )
+                # Update the historical feature in session state
+                st.session_state.historical_features[i]['historical_feature'] = historical_feature_value
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
-                    st.selectbox(
+                    hxfeature_index = ["", "Supports", "Does not support"].index(
+                        st.session_state.historical_features[i]['hxfeature'] if isinstance(st.session_state.historical_features[i], dict) else ""
+                    )
+                    hxfeature = st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
-                        index=["", "Supports", "Does not support"].index(st.session_state.historical_features[i]['hxfeature']),
+                        index=hxfeature_index,
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
+                    # Update hxfeature in session state
+                    st.session_state.historical_features[i]['hxfeature'] = hxfeature
 
         # Submit button for historical features
         if st.button("Submit", key="hx_features_submit_button"):
-            if not any(feature['historical_feature'] for feature in st.session_state.historical_features):  # Check if at least one historical feature is entered
+            if not any(feature['historical_feature'] for feature in st.session_state.historical_features):
                 st.error("Please enter at least one historical feature.")
             else:
                 entry = {
@@ -166,15 +173,13 @@ def main(db, document_id):
                     'diagnoses_s2': st.session_state.diagnoses_s2  # Include the reordered diagnoses here
                 }
 
-                # Make sure to capture hxfeatures in the current order of diagnoses
                 for i in range(5):
-                    for diagnosis in st.session_state.diagnoses:
-                        hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]
-                        if diagnosis not in entry['hxfeatures']:
-                            entry['hxfeatures'][diagnosis] = {}
-                        # Create a structured entry with historical feature and its hxfeature
+                    diagnosis = st.session_state.diagnoses[i]
+                    if diagnosis:
+                        hxfeature = st.session_state.historical_features[i]['hxfeature']
+                        historical_feature = st.session_state.historical_features[i]['historical_feature']
                         entry['hxfeatures'][diagnosis] = {
-                            'historical_feature': st.session_state.historical_features[i]['historical_feature'],
+                            'historical_feature': historical_feature,
                             'hxfeature': hxfeature
                         }
                 
@@ -186,3 +191,8 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  # Change to the Simple Success page
                 st.success("Historical features submitted successfully.")
                 st.rerun()  # Rerun to update the app
+
+# Run the app
+if __name__ == "__main__":
+    main(db, st.session_state.document_id)
+
