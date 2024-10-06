@@ -36,8 +36,8 @@ def main(db, document_id):
         st.session_state.current_page = "historical_features"  # Start on historical features page
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
-    if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = {}  # Initialize as a dictionary
+    if 'historical_feature' not in st.session_state:
+        st.session_state.historical_feature = {}  # Initialize as a dictionary
 
     # Load diagnoses from file
     dx_options = read_diagnoses_from_file()
