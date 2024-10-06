@@ -14,8 +14,9 @@ def read_diagnoses_from_file():
 
 def load_existing_data(db, document_id):
     """Load existing diagnoses and historical features from Firebase."""
-    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    user_data = db.collection(collection_name).document(document_id).get()  # Adjust collection name
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]  # Get collection name from secrets
+    user_data = db.collection(collection_name).document(document_id).get()
+    
     if user_data.exists:
         data = user_data.to_dict()
         diagnoses = []
@@ -36,8 +37,8 @@ def main(db, document_id):
         st.session_state.current_page = "historical_features"  # Start on historical features page
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
-    if 'historical_feature' not in st.session_state:
-        st.session_state.historical_feature = {}  # Initialize as a dictionary
+    if 'historical_features' not in st.session_state:
+        st.session_state.historical_features = {}  # Initialize as a dictionary
 
     # Load diagnoses from file
     dx_options = read_diagnoses_from_file()
@@ -102,11 +103,6 @@ def main(db, document_id):
             st.session_state.current_page = "Next Page"  # Adjust as needed
             st.rerun()  # Rerun to update the app
 
-if __name__ == "__main__":
-    # Replace with your Firestore initialization code
-    # db = initialize_firestore() 
-    document_id = "your_document_id"  # Set this appropriately
-    main(db, document_id)
 
 
 
