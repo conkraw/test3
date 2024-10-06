@@ -32,27 +32,26 @@ def load_laboratory_tests(db, document_id):
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
-        st.write("Fetched Lab Tests from Firebase:", lab_tests)  # Debugging output
-
-        # Initialize a list to track tests seen for assigning to lab_rows
-        seen_tests = {i: None for i in range(5)}
+        
+        # Initialize a list to track seen lab tests
+        seen_tests = set()
 
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
+                lab_test = test['laboratory_test']
+                assessment = test.get('assessment', "")
+
                 if i < 5:  # Ensure we stay within bounds
-                    lab_test = test['laboratory_test']
-                    assessment = test.get('assessment', "")
-                    
-                    # Populate lab_rows and dropdown_defaults if test is not already assigned
-                    if lab_test:
-                        if seen_tests[i] is None:
-                            lab_rows[i] = lab_test  # Only assign if not already set
-                            seen_tests[i] = lab_test
+                    # If lab_test is present and not seen before, assign it to lab_rows
+                    if lab_test and lab_test not in seen_tests:
+                        lab_rows[i] = lab_test  # Assign the lab test
+                        seen_tests.add(lab_test)  # Mark it as seen
 
-                        dropdown_defaults[diagnosis][i] = assessment
+                    # Assign the assessment for the diagnosis
+                    dropdown_defaults[diagnosis][i] = assessment
 
-    # Log the resulting lab_rows and dropdown_defaults for verification
+    # Debugging output
     st.write("Lab Rows after loading:", lab_rows)  # Debugging output
     st.write("Dropdown Defaults after loading:", dropdown_defaults)  # Debugging output
 
