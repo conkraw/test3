@@ -3,17 +3,14 @@ from utils.session_management import collect_session_data
 from utils.firebase_operations import upload_to_firebase
 
 def load_existing_examination(db, document_id):
-    """Load existing physical examination selections from Firebase."""
+    """Load existing questions and responses from Firebase."""
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     user_data = db.collection(collection_name).document(document_id).get()
-
+    
     if user_data.exists:
-        st.write("Loaded data from Firebase:", user_data.to_dict())  # Debugging output
-        return {
-            "excluded_exams": user_data.to_dict().get("excluded_exams", []),
-            "confirmed_exams": user_data.to_dict().get("confirmed_exams", [])
-        }
-    return {"excluded_exams": [], "confirmed_exams": []}
+        return user_data.to_dict().get("excluded_exams", []), user_data.to_dict().get("confirmed_exams", [])
+    return [], []
+
 
 def display_focused_physical_examination(db, document_id):
     st.title("Focused Physical Examination Selection")
