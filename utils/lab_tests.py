@@ -128,7 +128,7 @@ def display_laboratory_tests(db, document_id):
             selected_lab_test = st.selectbox(
                 f"Test for {st.session_state.diagnoses[i]}",
                 options=[""] + lab_test_options,
-                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else -1),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
