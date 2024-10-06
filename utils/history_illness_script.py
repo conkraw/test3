@@ -122,14 +122,15 @@ def main(db, document_id):
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", value=st.session_state.historical_features[i], key=f"hist_row_{i}", label_visibility="collapsed")
+                st.session_state.historical_features[i] = st.text_input(f"Feature for {st.session_state.diagnoses[i]}:", value=st.session_state.historical_features[i], key=f"hist_row_{i}", label_visibility="collapsed")
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
                     st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
-                        index=["", "Supports", "Does not support"].index(st.session_state.historical_features[i]),
+                        index=["", "Supports", "Does not support"].index(
+                            st.session_state.historical_features[i] if st.session_state.historical_features[i] in ["Supports", "Does not support"] else ""),
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
@@ -146,15 +147,15 @@ def main(db, document_id):
 
                 # Make sure to capture hxfeatures in the current order of diagnoses
                 for i in range(5):
-                    for diagnosis in st.session_state.diagnoses:
-                        hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]
-                        if diagnosis not in entry['hxfeatures']:  # Changed from assessments
-                            entry['hxfeatures'][diagnosis] = []  # Changed from assessments
-                        # Create a structured entry with historical feature and its hxfeature
-                        entry['hxfeatures'][diagnosis].append({
-                            'historical_feature': st.session_state.historical_features[i],
-                            'hxfeature': hxfeature  # Changed from assessment
-                        })
+                    diagnosis = st.session_state.diagnoses[i]
+                    hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]
+                    if diagnosis not in entry['hxfeatures']:
+                        entry['hxfeatures'][diagnosis] = []  # Changed from assessments
+                    # Create a structured entry with historical feature and its hxfeature
+                    entry['hxfeatures'][diagnosis].append({
+                        'historical_feature': st.session_state.historical_features[i],
+                        'hxfeature': hxfeature  # Changed from assessment
+                    })
                 
                 session_data = collect_session_data()  # Collect session data
 
@@ -164,5 +165,7 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  # Change to the Simple Success page
                 st.success("Historical features submitted successfully.")
                 st.rerun()  # Rerun to update the app
+
+
 
 
