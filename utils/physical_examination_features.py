@@ -12,26 +12,6 @@ def read_diagnoses_from_file():
         st.error(f"Error reading dx_list.txt: {e}")
         return []
 
-def load_physical_examination_features(db, document_id):
-    """Load existing physical examination features from Firebase."""
-    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    user_data = db.collection(collection_name).document(document_id).get()
-    if user_data.exists:
-        pefeatures = user_data.to_dict().get('pefeatures', {})
-        physical_examination_features = [""] * 5  # Default to empty for 5 features
-        dropdown_defaults = {diagnosis: [""] * 5 for diagnosis in pefeatures}  # Prepare default dropdowns
-        
-        # Populate physical examination features based on your structure
-        for diagnosis, features in pefeatures.items():
-            for i, feature in enumerate(features):
-                if i < len(physical_examination_features):  # Ensure we stay within bounds
-                    physical_examination_features[i] = feature['physical_feature']
-                    dropdown_defaults[diagnosis][i] = feature['assessment']  # Set dropdown default values
-        
-        return physical_examination_features, dropdown_defaults
-    else:
-        return [""] * 5, {}  # Default to empty if no data
-
 def display_physical_examination_features(db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
@@ -41,7 +21,7 @@ def display_physical_examination_features(db, document_id):
     if 'diagnoses_s3' not in st.session_state:  # Initialize diagnoses_s3
         st.session_state.diagnoses_s3 = [""] * 5  
     if 'physical_examination_features' not in st.session_state:
-        st.session_state.physical_examination_features, st.session_state.dropdown_defaults = load_physical_examination_features(db, document_id)
+        st.session_state.physical_examination_features = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
         st.session_state.selected_moving_diagnosis = ""  
 
@@ -114,7 +94,6 @@ def display_physical_examination_features(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
-            # Populate text input with existing value from session state
             st.session_state.physical_examination_features[i] = st.text_input(
                 f"",
                 value=st.session_state.physical_examination_features[i],
@@ -124,11 +103,17 @@ def display_physical_examination_features(db, document_id):
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
-                # Prefill the dropdowns with values from the loaded data
+                dropdown_defaults = st.session_state.dropdown_defaults.get(diagnosis, [""])
+                # Ensure the index exists before accessing it
+                if i < len(dropdown_defaults):
+                    index = ["", "Supports", "Does not support"].index(dropdown_defaults[i]) if dropdown_defaults[i] in ["", "Supports", "Does not support"] else 0
+                else:
+                    index = 0  # Default to the first option if out of bounds
+                
                 st.selectbox(
                     "Assessment for " + diagnosis,
                     options=["", "Supports", "Does not support"],
-                    index=["", "Supports", "Does not support"].index(st.session_state.dropdown_defaults.get(diagnosis, [""])[i]),
+                    index=index,
                     key=f"select_{i}_{diagnosis}_phys",
                     label_visibility="collapsed"
                 )
