@@ -114,16 +114,27 @@ def main(db, document_id):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
                 historical_feature_key = f"hist_row_{i}"
-                st.session_state.historical_features[i] = st.text_input(f"", key=historical_feature_key, label_visibility="collapsed", value=st.session_state.historical_features.get(diagnosis, [''])[i] if diagnosis in st.session_state.historical_features else '')
+                # Default value for the input field
+                default_historical_feature = st.session_state.historical_features.get(diagnosis, [''])[i] if diagnosis in st.session_state.historical_features else ''
+                st.session_state.historical_features[i] = st.text_input(f"", key=historical_feature_key, label_visibility="collapsed", value=default_historical_feature)
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 hxfeature_key = f"select_{i}_{diagnosis}_hist"
+                
+                # Ensure hxfeatures for this diagnosis exists before setting the index
+                existing_hxfeatures = st.session_state.historical_features.get(diagnosis, [])
+                hxfeature_options = ["", "Supports", "Does not support"]
+                
+                # Set index safely
+                selected_hxfeature = next((hx['hxfeature'] for hx in existing_hxfeatures if hx['historical_feature'] == default_historical_feature), "")
+                index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0  # Default to 0 if not found
+
                 st.selectbox(
                     "hxfeatures for " + diagnosis,
-                    options=["", "Supports", "Does not support"],
+                    options=hxfeature_options,
                     key=hxfeature_key,
                     label_visibility="collapsed",
-                    index=st.session_state.historical_features.get(diagnosis, []).index(next((hx['hxfeature'] for hx in st.session_state.historical_features[diagnosis] if hx['historical_feature'] == st.session_state.historical_features[i]), "")) if diagnosis in st.session_state.historical_features else 0
+                    index=index
                 )
 
         # Submit button for historical features
@@ -155,3 +166,5 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
+
+
