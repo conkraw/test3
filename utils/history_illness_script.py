@@ -14,7 +14,8 @@ def read_diagnoses_from_file():
 
 def load_existing_data(db, document_id):
     """Load existing diagnoses and historical features from Firebase."""
-    user_data = db.collection("your_collection_name").document(document_id).get()  # Adjust collection name
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()  # Adjust collection name
     if user_data.exists:
         data = user_data.to_dict()
         diagnoses = []
