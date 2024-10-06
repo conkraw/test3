@@ -59,7 +59,6 @@ def display_laboratory_tests(db, document_id):
     # Sidebar for reordering and changing diagnoses
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
-
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
@@ -106,10 +105,17 @@ def display_laboratory_tests(db, document_id):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
+
+            # Set a default index
+            if st.session_state.lab_rows[i] in lab_test_options:
+                selected_index = lab_test_options.index(st.session_state.lab_rows[i])
+            else:
+                selected_index = 0  # Default to first option if not found
+
             selected_lab_test = st.selectbox(
                 f"Test for row {i + 1}",
                 options=lab_test_options,
-                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else -1),  # Use -1 for not found
+                index=selected_index,
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
@@ -154,4 +160,3 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  
             st.success("Laboratory tests submitted successfully.")
             st.rerun()
-
