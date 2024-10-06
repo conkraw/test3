@@ -118,8 +118,8 @@ def display_laboratory_tests(db, document_id):
             st.markdown(diagnosis)
 
     # Debugging prints
-    st.write("Lab Rows:", st.session_state.lab_rows)
-    st.write("Dropdown Defaults:", st.session_state.dropdown_defaults)
+    #st.write("Lab Rows:", st.session_state.lab_rows)
+    #st.write("Dropdown Defaults:", st.session_state.dropdown_defaults)
 
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
