@@ -113,7 +113,7 @@ def display_physical_examination_features(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
-            # Pre-fill with existing values from session state
+            # Prefill with existing values from session state
             st.session_state.physical_examination_features[i] = st.text_input(
                 f"Feature {i + 1}",
                 value=st.session_state.physical_examination_features[i],  # Prefill with existing value
@@ -123,6 +123,7 @@ def display_physical_examination_features(db, document_id):
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
+                # Safely get dropdown default value
                 dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
                 index = ["", "Supports", "Does not support"].index(dropdown_value) if dropdown_value in ["", "Supports", "Does not support"] else 0
 
@@ -165,3 +166,7 @@ def display_physical_examination_features(db, document_id):
             st.session_state.page = "Laboratory Tests"  # Change to the next page
             st.success("Physical examination features submitted successfully.")
             st.rerun()  # Rerun to update the app
+
+# Call the function to run the app
+# This would normally be placed in your main entry point
+# display_physical_examination_features(db, document_id)
