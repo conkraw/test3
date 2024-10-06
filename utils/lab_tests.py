@@ -1,5 +1,5 @@
-import streamlit as st
-from utils.session_management import collect_session_data  #######NEED THIS
+import streamlit as st 
+from utils.session_management import collect_session_data  
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -28,22 +28,20 @@ def load_laboratory_tests(db, document_id):
     user_data = db.collection(collection_name).document(document_id).get()
     
     lab_rows = [""] * 5  # Default to empty for 5 tests
+    dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Track how many slots have been filled
-        filled_slots = 0
-
-        # Iterate through each diagnosis and populate the lab_rows
+        # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
-            for test in tests:
-                if filled_slots < 5:  # Ensure we don't exceed the number of lab rows
-                    lab_rows[filled_slots] = test.get('laboratory_test', "")  # Fill lab rows in order
-                    filled_slots += 1  # Move to the next slot
+            for i, test in enumerate(tests):
+                if i < 5:  # Ensure we stay within bounds
+                    if test['laboratory_test']:
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
-    return lab_rows
-
+    return lab_rows, dropdown_defaults
 
 def display_laboratory_tests(db, document_id):
     # Initialize session state
@@ -52,7 +50,7 @@ def display_laboratory_tests(db, document_id):
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
-        st.session_state.selected_moving_diagnosis = ""
+        st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[0] if st.session_state.diagnoses else ""
 
     # Load diagnoses and laboratory tests from files
     dx_options = read_diagnoses_from_file()
@@ -69,10 +67,14 @@ def display_laboratory_tests(db, document_id):
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
 
+        # Debugging information
+        st.write("Current selected moving diagnosis:", st.session_state.selected_moving_diagnosis)
+        st.write("Available diagnoses:", st.session_state.diagnoses)
+
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
-            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            index=(st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0),
             key="move_diagnosis"
         )
 
@@ -122,10 +124,11 @@ def display_laboratory_tests(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            lab_test_options = read_lab_tests_from_file()
             selected_lab_test = st.selectbox(
-                f"",
-                options=[""] + read_lab_tests_from_file(),  # Populate lab tests here
-                index=read_lab_tests_from_file().index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in read_lab_tests_from_file() else 0,
+                f"Test for row {i + 1}",
+                options=[""] + lab_test_options,
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
