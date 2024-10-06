@@ -33,17 +33,23 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
+        # Debugging: Print lab_tests to check structure
+        st.write("Loaded lab tests from Firebase:", lab_tests)
+
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
-                    # Populate lab rows directly
                     if test['laboratory_test']:
-                        lab_rows[i] = test['laboratory_test'] if lab_rows[i] == "" else lab_rows[i]  # Only fill if empty
-                    # Set dropdown default values
-                    dropdown_defaults[diagnosis][i] = test['assessment'] if dropdown_defaults[diagnosis][i] == "" else dropdown_defaults[diagnosis][i]
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
+
+    # Debugging: Print lab_rows and dropdown_defaults to check values
+    st.write("Lab Rows:", lab_rows)
+    st.write("Dropdown Defaults:", dropdown_defaults)
 
     return lab_rows, dropdown_defaults
+
 
 def display_laboratory_tests(db, document_id):
     # Initialize session state
