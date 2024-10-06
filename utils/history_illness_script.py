@@ -30,7 +30,7 @@ def main(db, document_id):
         st.session_state.current_page = "historical_features"
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
-    if 'diagnoses_s2' not in st.session_state or 'hxfeatures' not in st.session_state:
+    if 'diagnoses_s2' not in st.session_state:
         st.session_state.diagnoses_s2, st.session_state.historical_features = load_existing_data(db, document_id)  
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
@@ -46,13 +46,15 @@ def main(db, document_id):
 
     # Historical Features Page
     if st.session_state.current_page == "historical_features":
-        st.markdown("""### HISTORICAL FEATURES
+        st.markdown("""
+            ### HISTORICAL FEATURES
             Please provide up to 5 historical features that influence the differential diagnosis.
         """)
 
         # Reorder section in the sidebar
         with st.sidebar:
             st.subheader("Reorder Diagnoses")
+
             selected_diagnosis = st.selectbox(
                 "Select a diagnosis to move",
                 options=st.session_state.diagnoses,
@@ -99,42 +101,34 @@ def main(db, document_id):
                             st.rerun()  
 
         # Ensure diagnoses_s2 is always updated to the current state of diagnoses
-        st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]  
+        st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]
 
-        # Display historical features and dropdowns
+        # Display historical features
+        cols = st.columns(len(st.session_state.diagnoses) + 1)
+        with cols[0]:
+            st.markdown("Historical Features")
+
+        for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
+            with col:
+                st.markdown(diagnosis)
+
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                historical_feature_value = st.session_state.historical_features.get(st.session_state.diagnoses[i], [{}])[0].get('historical_feature', '')
-                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", key=f"hist_row_{i}", label_visibility="collapsed", value=historical_feature_value)
+                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", key=f"hist_row_{i}", label_visibility="collapsed")
 
-            for j, diagnosis in enumerate(st.session_state.diagnoses):
-                if diagnosis:  # Only create dropdowns for non-empty diagnoses
-                    hxfeature_key = f"select_{i}_{diagnosis}_hist"
-
-                    # Ensure hxfeatures for this diagnosis exists
-                    existing_hxfeatures = st.session_state.historical_features.get(diagnosis, [])
-                    
-                    hxfeature_options = ["", "Supports", "Does not support"]
-                    selected_hxfeature = ""
-                    for hx in existing_hxfeatures:
-                        if hx.get('historical_feature', '') == historical_feature_value:
-                            selected_hxfeature = hx.get('hxfeature', "")
-                            break
-                    
-                    index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0
-
+            for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
+                with col:
                     st.selectbox(
-                        f"Hxfeatures for {diagnosis}",
-                        options=hxfeature_options,
-                        key=hxfeature_key,
-                        label_visibility="collapsed",
-                        index=index
+                        "hxfeatures for " + diagnosis,
+                        options=["", "Supports", "Does not support"],
+                        key=f"select_{i}_{diagnosis}_hist",
+                        label_visibility="collapsed"
                     )
 
         # Submit button for historical features
         if st.button("Submit", key="hx_features_submit_button"):
-            if not any(st.session_state.historical_features):  
+            if not any(st.session_state.historical_features):  # Check if at least one historical feature is entered
                 st.error("Please enter at least one historical feature.")
             else:
                 entry = {
@@ -155,15 +149,9 @@ def main(db, document_id):
                 
                 session_data = collect_session_data()  
 
-                # Upload to Firebase using the current diagnosis order
                 upload_message = upload_to_firebase(db, document_id, entry)
                 
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
-
-
-
-
-
 
