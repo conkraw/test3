@@ -12,6 +12,26 @@ def read_diagnoses_from_file():
         st.error(f"Error reading dx_list.txt: {e}")
         return []
 
+def load_physical_examination_features(db, document_id):
+    """Load existing physical examination features from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    if user_data.exists:
+        pefeatures = user_data.to_dict().get('pefeatures', {})
+        physical_features = [""] * 5  # Default to empty for 5 features
+        dropdown_defaults = {diagnosis: [""] * 5 for diagnosis in pefeatures}  # Prepare default dropdowns
+        
+        # Populate physical features based on your structure
+        for diagnosis, features in pefeatures.items():
+            for i, feature in enumerate(features):
+                if i < len(physical_features):  # Ensure we stay within bounds
+                    physical_features[i] = feature['physical_feature']
+                    dropdown_defaults[diagnosis][i] = feature['assessment']  # Set dropdown default values
+        
+        return physical_features, dropdown_defaults
+    else:
+        return [""] * 5, {}  # Default to empty if no data
+
 def display_physical_examination_features(db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
@@ -21,7 +41,7 @@ def display_physical_examination_features(db, document_id):
     if 'diagnoses_s3' not in st.session_state:  # Initialize diagnoses_s3
         st.session_state.diagnoses_s3 = [""] * 5  
     if 'physical_examination_features' not in st.session_state:
-        st.session_state.physical_examination_features = [""] * 5
+        st.session_state.physical_examination_features, st.session_state.dropdown_defaults = load_physical_examination_features(db, document_id)
     if 'selected_moving_diagnosis' not in st.session_state:
         st.session_state.selected_moving_diagnosis = ""  
 
@@ -93,13 +113,22 @@ def display_physical_examination_features(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
-            st.session_state.physical_examination_features[i] = st.text_input(f"Feature {i + 1}", key=f"phys_row_{i}", label_visibility="collapsed", value=st.session_state.physical_examination_features[i])
+            st.session_state.physical_examination_features[i] = st.text_input(
+                f"Feature {i + 1}",
+                key=f"phys_row_{i}",
+                label_visibility="collapsed",
+                value=st.session_state.physical_examination_features[i]  # Prefill with existing value
+            )
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
+                dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
+                index = ["", "Supports", "Does not support"].index(dropdown_value) if dropdown_value in ["", "Supports", "Does not support"] else 0
+
                 st.selectbox(
                     "Assessment for " + diagnosis,
                     options=["", "Supports", "Does not support"],
+                    index=index,
                     key=f"select_{i}_{diagnosis}_phys",
                     label_visibility="collapsed"
                 )
@@ -110,11 +139,11 @@ def display_physical_examination_features(db, document_id):
         if not any(st.session_state.physical_examination_features):
             st.error("Please enter at least one physical examination feature.")
         else:
-            pefeatures = {}  # Change from assessments to pefeatures
+            pefeatures = {}
             for i in range(5):
                 for diagnosis in st.session_state.diagnoses:
                     assessment = st.session_state[f"select_{i}_{diagnosis}_phys"]
-                    if diagnosis not in pefeatures:  # Change from assessments to pefeatures
+                    if diagnosis not in pefeatures:
                         pefeatures[diagnosis] = []
                     pefeatures[diagnosis].append({
                         'physical_feature': st.session_state.physical_examination_features[i],
@@ -122,11 +151,11 @@ def display_physical_examination_features(db, document_id):
                     })
             
             # Always update diagnoses_s3 to the current state of diagnoses
-            st.session_state.diagnoses_s3 = [dx for dx in st.session_state.diagnoses if dx]  # Ensure it's always set
+            st.session_state.diagnoses_s3 = [dx for dx in st.session_state.diagnoses if dx]
 
             entry = {
-                'pefeatures': pefeatures,  # Include pefeatures in the entry
-                'diagnoses_s3': st.session_state.diagnoses_s3  # Include diagnoses_s3 in the entry
+                'pefeatures': pefeatures,
+                'diagnoses_s3': st.session_state.diagnoses_s3
             }
 
             # Upload to Firebase using the current diagnosis order
