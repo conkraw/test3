@@ -21,10 +21,10 @@ def load_historical_features_from_firebase(db, document_id):
         for diagnosis, features in hx_data.items():
             if diagnosis in st.session_state.diagnoses:
                 idx = st.session_state.diagnoses.index(diagnosis)
-                # Load historical features into session state
-                # Ensure the list has enough entries to avoid IndexError
-                while len(st.session_state.historical_features) <= idx:
-                    st.session_state.historical_features.append("")
+                # Initialize the historical features list if it doesn't exist
+                if len(st.session_state.historical_features) <= idx:
+                    st.session_state.historical_features.append([])
+                # Store the historical features for the diagnosis
                 st.session_state.historical_features[idx] = [feature['historical_feature'] for feature in features]
 
 def main(db, document_id):
@@ -122,8 +122,12 @@ def main(db, document_id):
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                # Display historical feature for each diagnosis
-                historical_feature_value = st.session_state.historical_features[i][0] if i < len(st.session_state.historical_features) and st.session_state.historical_features[i] else ""
+                # Set the historical feature input based on the corresponding historical features list
+                historical_feature_value = (
+                    st.session_state.historical_features[i][0] 
+                    if i < len(st.session_state.historical_features) and st.session_state.historical_features[i] 
+                    else ""
+                )
                 st.session_state.historical_features[i] = st.text_input(
                     f"", 
                     value=historical_feature_value,
