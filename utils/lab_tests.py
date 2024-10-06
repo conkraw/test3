@@ -57,8 +57,49 @@ def display_laboratory_tests(db, document_id):
     st.markdown("Of the following, please select up to 5 laboratory tests that you would order and describe how they influence the differential diagnosis.")
 
     # Sidebar for reordering and changing diagnoses
-    with st.sidebar:
-        # Sidebar code remains unchanged...
+     with st.sidebar:
+        st.subheader("Reorder Diagnoses")
+
+        selected_diagnosis = st.selectbox(
+            "Select a diagnosis to move",
+            options=st.session_state.diagnoses,
+            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            key="move_diagnosis"
+        )
+
+        move_direction = st.radio("Adjust Priority:", options=["Higher Priority", "Lower Priority"], key="move_direction")
+
+        if st.button("Adjust Priority"):
+            idx = st.session_state.diagnoses.index(selected_diagnosis)
+            if move_direction == "Higher Priority" and idx > 0:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx - 1] = (
+                    st.session_state.diagnoses[idx - 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx - 1]  
+            elif move_direction == "Lower Priority" and idx < len(st.session_state.diagnoses) - 1:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx + 1] = (
+                    st.session_state.diagnoses[idx + 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
+
+        # Change a diagnosis section
+        st.subheader("Change a Diagnosis")
+        change_diagnosis = st.selectbox(
+            "Select a diagnosis to change",
+            options=st.session_state.diagnoses,
+            key="change_diagnosis"
+        )
+
+        new_diagnosis_search = st.text_input("Search for a new diagnosis", "")
+        if new_diagnosis_search:
+            new_filtered_options = [dx for dx in dx_options if new_diagnosis_search.lower() in dx.lower() and dx not in st.session_state.diagnoses]
+            if new_filtered_options:
+                st.write("**Available Options:**")
+                for option in new_filtered_options:
+                    if st.button(f"{option}", key=f"select_new_{option}"):
+                        index_to_change = st.session_state.diagnoses.index(change_diagnosis)
+                        st.session_state.diagnoses[index_to_change] = option
+                        st.rerun()  
 
     # Display laboratory tests
     for i in range(5):
