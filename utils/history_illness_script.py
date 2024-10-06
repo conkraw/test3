@@ -24,7 +24,7 @@ def load_existing_data(db, document_id):
             hxfeatures = data["hxfeatures"]
             for diagnosis, features in hxfeatures.items():
                 diagnoses.append(diagnosis)
-                historical_features[diagnosis] = features  # Assuming features is a list or dict
+                historical_features[diagnosis] = features  # Assuming features is a dict with historical_feature and hxfeature
 
         return diagnoses, historical_features
     return [], {}
@@ -36,7 +36,7 @@ def main(db, document_id):
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = {}
+        st.session_state.historical_features = {}  # Initialize as a dictionary
 
     # Load diagnoses from file
     dx_options = read_diagnoses_from_file()
@@ -100,6 +100,7 @@ def main(db, document_id):
             st.success("Historical features submitted successfully.")
             st.session_state.current_page = "Next Page"  # Adjust as needed
             st.rerun()  # Rerun to update the app
+
 
 
 
