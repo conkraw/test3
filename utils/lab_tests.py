@@ -20,11 +20,8 @@ def read_lab_tests_from_file():
         st.error(f"Error reading labtests.txt: {e}")
         return []
 
-def load_laboratory_tests(db, document_id):
-    """Load existing laboratory tests from Firebase."""
-    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
-    user_data = db.collection(collection_name).document(document_id).get()
-    
+def fetch_laboratory_tests_from_firebase(user_data):
+    """Extract laboratory tests from the fetched user data."""
     lab_rows = [""] * 5  # Default to empty for 5 tests
     dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
 
@@ -32,12 +29,19 @@ def load_laboratory_tests(db, document_id):
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
-                if i < 5:
+                if i < 5:  # Ensure we stay within bounds
                     if test['laboratory_test']:
-                        lab_rows[i] = test['laboratory_test']
-                    dropdown_defaults[diagnosis][i] = test['assessment']
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
+
+def load_laboratory_tests(db, document_id):
+    """Load existing laboratory tests from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+
+    return fetch_laboratory_tests_from_firebase(user_data)
 
 def display_laboratory_tests(db, document_id):
     if 'current_page' not in st.session_state:
