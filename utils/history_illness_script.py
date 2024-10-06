@@ -23,13 +23,25 @@ def load_data_from_firebase(db, document_id):
         if user_data.exists:
             data = user_data.to_dict()
             st.session_state.diagnoses_s2 = data.get('diagnoses_s2', [""] * 5)
-            hxfeatures = data.get('hxfeatures', {})
+            hxfeatures = data.get('hxfeatures', {})  # Get the hxfeatures section
+            
             # Initialize historical features based on fetched hxfeatures
+            st.session_state.historical_features = []
             for diagnosis in st.session_state.diagnoses_s2:
-                st.session_state.historical_features.append(hxfeatures.get(diagnosis, ""))
+                if diagnosis in hxfeatures:
+                    historical_info = hxfeatures[diagnosis]
+                    st.session_state.historical_features.append({
+                        'historical_feature': historical_info.get('historical_feature', ""),
+                        'hxfeature': historical_info.get('hxfeature', "")
+                    })
+                else:
+                    st.session_state.historical_features.append({
+                        'historical_feature': "",
+                        'hxfeature': ""
+                    })
         else:
             st.session_state.diagnoses_s2 = [""] * 5  # Default to empty if no data
-            st.session_state.historical_features = [""] * 5
+            st.session_state.historical_features = [{"historical_feature": "", "hxfeature": ""} for _ in range(5)]
 
 def main(db, document_id):
     # Initialize session state
@@ -39,7 +51,7 @@ def main(db, document_id):
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = [""] * 5
+        st.session_state.historical_features = [{"historical_feature": "", "hxfeature": ""} for _ in range(5)]
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
@@ -127,39 +139,44 @@ def main(db, document_id):
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                st.session_state.historical_features[i] = st.text_input(f"", value=st.session_state.historical_features[i], key=f"hist_row_{i}", label_visibility="collapsed")
+                st.session_state.historical_features[i]['historical_feature'] = st.text_input(
+                    f"", 
+                    value=st.session_state.historical_features[i]['historical_feature'], 
+                    key=f"hist_row_{i}", 
+                    label_visibility="collapsed"
+                )
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
                     st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
+                        index=["", "Supports", "Does not support"].index(st.session_state.historical_features[i]['hxfeature']),
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
 
         # Submit button for historical features
         if st.button("Submit", key="hx_features_submit_button"):
-            if not any(st.session_state.historical_features):  # Check if at least one historical feature is entered
+            if not any(feature['historical_feature'] for feature in st.session_state.historical_features):  # Check if at least one historical feature is entered
                 st.error("Please enter at least one historical feature.")
             else:
                 entry = {
-                    'hxfeatures': {},  # Changed from 'assessments'
+                    'hxfeatures': {},  # Updated key to match Firebase structure
                     'diagnoses_s2': st.session_state.diagnoses_s2  # Include the reordered diagnoses here
                 }
 
                 # Make sure to capture hxfeatures in the current order of diagnoses
-                hxfeatures = {}
                 for i in range(5):
                     for diagnosis in st.session_state.diagnoses:
                         hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]
                         if diagnosis not in entry['hxfeatures']:
-                            entry['hxfeatures'][diagnosis] = []
+                            entry['hxfeatures'][diagnosis] = {}
                         # Create a structured entry with historical feature and its hxfeature
-                        entry['hxfeatures'][diagnosis].append({
-                            'historical_feature': st.session_state.historical_features[i],
+                        entry['hxfeatures'][diagnosis] = {
+                            'historical_feature': st.session_state.historical_features[i]['historical_feature'],
                             'hxfeature': hxfeature
-                        })
+                        }
                 
                 session_data = collect_session_data()  # Collect session data
 
@@ -169,4 +186,3 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  # Change to the Simple Success page
                 st.success("Historical features submitted successfully.")
                 st.rerun()  # Rerun to update the app
-
