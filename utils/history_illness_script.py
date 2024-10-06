@@ -43,6 +43,13 @@ def main(db, document_id):
         st.session_state.diagnoses = [""] * 5
     if 'diagnoses_s2' not in st.session_state:
         st.session_state.diagnoses_s2, st.session_state.historical_features, st.session_state.hxfeature_dropdowns = load_existing_data(db, document_id)
+    else:
+        # Ensure historical_features and hxfeature_dropdowns are initialized
+        if 'historical_features' not in st.session_state:
+            st.session_state.historical_features = [""] * 5
+        if 'hxfeature_dropdowns' not in st.session_state:
+            st.session_state.hxfeature_dropdowns = [""] * 5
+            
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
@@ -166,4 +173,6 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
+
+
 
