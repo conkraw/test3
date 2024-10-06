@@ -33,14 +33,16 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Populate lab_rows and dropdown_defaults
+        # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
                 if i < 5:  # Ensure we stay within bounds
-                    lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                    if test['laboratory_test']:
+                        lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
     return lab_rows, dropdown_defaults
+
 
 def display_laboratory_tests(db, document_id):
     # Initialize session state
