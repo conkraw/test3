@@ -19,15 +19,18 @@ def load_historical_features(db, document_id):
     if user_data.exists:
         hxfeatures = user_data.to_dict().get('hxfeatures', {})
         historical_features = [""] * 5  # Default to empty for 5 features
+        dropdown_defaults = {diagnosis: [""] * 5 for diagnosis in hxfeatures}  # Prepare default dropdowns
         
         # Populate historical features based on your structure
         for diagnosis, features in hxfeatures.items():
             for i, feature in enumerate(features):
                 if i < len(historical_features):  # Ensure we stay within bounds
                     historical_features[i] = feature['historical_feature']
-        return historical_features
+                    dropdown_defaults[diagnosis][i] = feature['hxfeature']  # Set dropdown default values
+        
+        return historical_features, dropdown_defaults
     else:
-        return [""] * 5  # Default to empty if no data
+        return [""] * 5, {}  # Default to empty if no data
 
 def main(db, document_id):
     # Initialize session state
@@ -38,64 +41,14 @@ def main(db, document_id):
     if 'diagnoses_s2' not in st.session_state:  
         st.session_state.diagnoses_s2 = [""] * 5  
     if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = load_historical_features(db, document_id)
+        st.session_state.historical_features, st.session_state.dropdown_defaults = load_historical_features(db, document_id)
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
         st.session_state.selected_moving_diagnosis = ""  
-    
+
     # Title of the app
     st.title("Historical Features App")
-
-    # Sidebar for diagnosis management
-    with st.sidebar:
-        st.subheader("Reorder Diagnoses")
-        
-        selected_diagnosis = st.selectbox(
-            "Select a diagnosis to move",
-            options=st.session_state.diagnoses,
-            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
-            key="move_diagnosis"
-        )
-
-        move_direction = st.radio("Adjust Priority:", options=["Higher Priority", "Lower Priority"], key="move_direction")
-
-        if st.button("Adjust Priority"):
-            idx = st.session_state.diagnoses.index(selected_diagnosis)
-            if move_direction == "Higher Priority" and idx > 0:
-                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx - 1] = (
-                    st.session_state.diagnoses[idx - 1], st.session_state.diagnoses[idx]
-                )
-                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx - 1]  
-            elif move_direction == "Lower Priority" and idx < len(st.session_state.diagnoses) - 1:
-                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx + 1] = (
-                    st.session_state.diagnoses[idx + 1], st.session_state.diagnoses[idx]
-                )
-                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
-
-            # Update diagnoses_s2 after moving
-            st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]
-
-        # Change a diagnosis section
-        st.subheader("Change a Diagnosis")
-        change_diagnosis = st.selectbox(
-            "Select a diagnosis to change",
-            options=st.session_state.diagnoses,
-            key="change_diagnosis"
-        )
-
-        new_diagnosis_search = st.text_input("Search for a new diagnosis", "")
-        if new_diagnosis_search:
-            dx_options = read_diagnoses_from_file()
-            new_filtered_options = [dx for dx in dx_options if new_diagnosis_search.lower() in dx.lower() and dx not in st.session_state.diagnoses]
-            if new_filtered_options:
-                st.write("**Available Options:**")
-                for option in new_filtered_options:
-                    if st.button(f"{option}", key=f"select_new_{option}"):
-                        index_to_change = st.session_state.diagnoses.index(change_diagnosis)
-                        st.session_state.diagnoses[index_to_change] = option
-                        st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]
-                        st.rerun()  
 
     # Historical Features Page
     if st.session_state.current_page == "historical_features":
@@ -103,6 +56,60 @@ def main(db, document_id):
             ### HISTORICAL FEATURES
             Please provide up to 5 historical features that influence the differential diagnosis.
         """)
+
+        # Sidebar for diagnosis management
+        with st.sidebar:
+            st.subheader("Reorder Diagnoses")
+
+            selected_diagnosis = st.selectbox(
+                "Select a diagnosis to move",
+                options=st.session_state.diagnoses,
+                index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+                key="move_diagnosis"
+            )
+
+            move_direction = st.radio("Adjust Priority:", options=["Higher Priority", "Lower Priority"], key="move_direction")
+
+            if st.button("Adjust Priority"):
+                idx = st.session_state.diagnoses.index(selected_diagnosis)
+                if move_direction == "Higher Priority" and idx > 0:
+                    st.session_state.diagnoses[idx], st.session_state.diagnoses[idx - 1] = (
+                        st.session_state.diagnoses[idx - 1], st.session_state.diagnoses[idx]
+                    )
+                    st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx - 1]  
+                elif move_direction == "Lower Priority" and idx < len(st.session_state.diagnoses) - 1:
+                    st.session_state.diagnoses[idx], st.session_state.diagnoses[idx + 1] = (
+                        st.session_state.diagnoses[idx + 1], st.session_state.diagnoses[idx]
+                    )
+                    st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
+
+                # Update diagnoses_s2 after moving
+                st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+
+            # Change a diagnosis section
+            st.subheader("Change a Diagnosis")
+            change_diagnosis = st.selectbox(
+                "Select a diagnosis to change",
+                options=st.session_state.diagnoses,
+                key="change_diagnosis"
+            )
+
+            new_diagnosis_search = st.text_input("Search for a new diagnosis", "")
+            if new_diagnosis_search:
+                dx_options = read_diagnoses_from_file()  # Re-read the diagnoses options
+                new_filtered_options = [dx for dx in dx_options if new_diagnosis_search.lower() in dx.lower() and dx not in st.session_state.diagnoses]
+                if new_filtered_options:
+                    st.write("**Available Options:**")
+                    for option in new_filtered_options:
+                        if st.button(f"{option}", key=f"select_new_{option}"):
+                            index_to_change = st.session_state.diagnoses.index(change_diagnosis)
+                            st.session_state.diagnoses[index_to_change] = option
+                            # Update diagnoses_s2 here as well
+                            st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]  # Update diagnoses_s2
+                            st.rerun()  
+
+        # Ensure diagnoses_s2 is always updated to the current state of diagnoses
+        st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]  # Update diagnoses_s2
 
         # Display historical features
         cols = st.columns(len(st.session_state.diagnoses) + 1)
@@ -119,47 +126,51 @@ def main(db, document_id):
                 # Populate text input with existing value from session state
                 st.session_state.historical_features[i] = st.text_input(
                     f"",
-                    value=st.session_state.historical_features[i],  # Load existing value
+                    value=st.session_state.historical_features[i],
                     key=f"hist_row_{i}",
                     label_visibility="collapsed"
                 )
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
+                    # Prefill the dropdowns with values from the loaded data
                     st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
+                        index=["", "Supports", "Does not support"].index(st.session_state.dropdown_defaults.get(diagnosis, [""])[i]),
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
 
         # Submit button for historical features
         if st.button("Submit", key="hx_features_submit_button"):
-            if not any(st.session_state.historical_features):
+            if not any(st.session_state.historical_features):  # Check if at least one historical feature is entered
                 st.error("Please enter at least one historical feature.")
             else:
                 entry = {
-                    'hxfeatures': {},
-                    'diagnoses_s2': st.session_state.diagnoses_s2
+                    'hxfeatures': {},  # Changed from 'assessments'
+                    'diagnoses_s2': st.session_state.diagnoses_s2  # Include the reordered diagnoses here
                 }
 
+                # Make sure to capture hxfeatures in the current order of diagnoses
+                hxfeatures = {}  # Changed from assessments
                 for i in range(5):
                     for diagnosis in st.session_state.diagnoses:
-                        hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]
-                        if diagnosis not in entry['hxfeatures']:
-                            entry['hxfeatures'][diagnosis] = []
-                        entry['hxfeatures'][diagnosis].append({
+                        hxfeature = st.session_state[f"select_{i}_{diagnosis}_hist"]  # Changed from assessment
+                        if diagnosis not in entry['hxfeatures']:  # Changed from assessments
+                            entry['hxfeatures'][diagnosis] = []  # Changed from assessments
+                        # Create a structured entry with historical feature and its hxfeature
+                        entry['hxfeatures'][diagnosis].append({  # Changed from assessments
                             'historical_feature': st.session_state.historical_features[i],
-                            'hxfeature': hxfeature
+                            'hxfeature': hxfeature  # Changed from assessment
                         })
                 
-                session_data = collect_session_data()
+                session_data = collect_session_data()  # Collect session data
 
-                # Upload to Firebase
+                # Upload to Firebase using the current diagnosis order
                 upload_message = upload_to_firebase(db, document_id, entry)
                 
-                st.session_state.page = "Physical Examination Features"
+                st.session_state.page = "Physical Examination Features"  # Change to the Simple Success page
                 st.success("Historical features submitted successfully.")
-                st.rerun()
-
+                st.rerun()  # Rerun to update the app
 
