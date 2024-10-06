@@ -29,12 +29,13 @@ def load_laboratory_tests(db, document_id):
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
-
-        # Directly map lab tests to lab_rows and dropdown defaults
-        for diagnosis, tests in lab_tests.items():
-            for i in range(min(5, len(tests))):  # Fill only up to 5 tests
+        
+        # Directly assign laboratory tests to lab_rows and dropdown defaults
+        for diagnosis in st.session_state.diagnoses:
+            tests = lab_tests.get(diagnosis, [])
+            for i in range(min(5, len(tests))):  # Ensure we don't go out of bounds
                 if tests[i]['laboratory_test']:
-                    lab_rows[i] = tests[i]['laboratory_test']  # Directly set the laboratory test
+                    lab_rows[i] = tests[i]['laboratory_test']  # Directly assign lab test
                 dropdown_defaults[diagnosis][i] = tests[i]['assessment']  # Set the assessment
 
     return lab_rows, dropdown_defaults
