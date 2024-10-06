@@ -101,46 +101,36 @@ def main(db, document_id):
         # Ensure diagnoses_s2 is always updated to the current state of diagnoses
         st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]  
 
-        # Display historical features
-        cols = st.columns(len(st.session_state.diagnoses) + 1)
-        with cols[0]:
-            st.markdown("Historical Features")
-
-        for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
-            with col:
-                st.markdown(diagnosis)
-
+        # Display historical features and dropdowns
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                # Use the historical feature directly if exists
-                historical_feature_key = f"hist_row_{i}"
-                historical_feature_value = st.session_state.historical_features.get(diagnosis, [{}])[i].get('historical_feature', '')
-                st.session_state.historical_features[i] = st.text_input(f"", key=historical_feature_key, label_visibility="collapsed", value=historical_feature_value)
+                historical_feature_value = st.session_state.historical_features.get(st.session_state.diagnoses[i], [{}])[0].get('historical_feature', '')
+                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", key=f"hist_row_{i}", label_visibility="collapsed", value=historical_feature_value)
 
-            for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
-                hxfeature_key = f"select_{i}_{diagnosis}_hist"
+            for j, diagnosis in enumerate(st.session_state.diagnoses):
+                if diagnosis:  # Only create dropdowns for non-empty diagnoses
+                    hxfeature_key = f"select_{i}_{diagnosis}_hist"
 
-                # Ensure hxfeatures for this diagnosis exists before setting the index
-                existing_hxfeatures = st.session_state.historical_features.get(diagnosis, [])
-                
-                hxfeature_options = ["", "Supports", "Does not support"]
-                # Set the index safely based on existing hxfeatures
-                selected_hxfeature = ""
-                for hx in existing_hxfeatures:
-                    if hx.get('historical_feature', '') == historical_feature_value:
-                        selected_hxfeature = hx.get('hxfeature', "")
-                        break
-                
-                index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0
+                    # Ensure hxfeatures for this diagnosis exists
+                    existing_hxfeatures = st.session_state.historical_features.get(diagnosis, [])
+                    
+                    hxfeature_options = ["", "Supports", "Does not support"]
+                    selected_hxfeature = ""
+                    for hx in existing_hxfeatures:
+                        if hx.get('historical_feature', '') == historical_feature_value:
+                            selected_hxfeature = hx.get('hxfeature', "")
+                            break
+                    
+                    index = hxfeature_options.index(selected_hxfeature) if selected_hxfeature in hxfeature_options else 0
 
-                st.selectbox(
-                    "hxfeatures for " + diagnosis,
-                    options=hxfeature_options,
-                    key=hxfeature_key,
-                    label_visibility="collapsed",
-                    index=index
-                )
+                    st.selectbox(
+                        f"Hxfeatures for {diagnosis}",
+                        options=hxfeature_options,
+                        key=hxfeature_key,
+                        label_visibility="collapsed",
+                        index=index
+                    )
 
         # Submit button for historical features
         if st.button("Submit", key="hx_features_submit_button"):
@@ -171,6 +161,8 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
+
+
 
 
 
