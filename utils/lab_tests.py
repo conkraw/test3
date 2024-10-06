@@ -109,41 +109,39 @@ def display_laboratory_tests(db, document_id):
                         st.rerun()  
 
     # Display laboratory tests
+    cols = st.columns(len(st.session_state.diagnoses) + 1)
+    with cols[0]:
+        st.markdown("Laboratory Tests")
+
+    for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
+        with col:
+            st.markdown(diagnosis)
+
+    for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
-            st.markdown("Laboratory Tests")
-        
-        # Iterate through the diagnoses
-        for i in range(5):
-            # Create a new row of columns for lab tests and assessments
-            cols = st.columns(len(st.session_state.diagnoses) + 1)
-            
-            with cols[0]:
-                lab_test_options = read_lab_tests_from_file()
-        
-                # Ensure we're getting the right lab test for this row
-                selected_lab_test = st.selectbox(
-                    f"Test for {st.session_state.diagnoses[i] if i < len(st.session_state.diagnoses) else ''}",
-                    options=[""] + lab_test_options,
-                    index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
-                    key=f"lab_row_{i}",
-                    label_visibility="collapsed",
+            lab_test_options = read_lab_tests_from_file()
+            selected_lab_test = st.selectbox(
+                f"Test for {st.session_state.diagnoses[i]}",
+                options=[""] + lab_test_options,
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
+                key=f"lab_row_{i}",
+                label_visibility="collapsed",
+            )
+
+        for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
+            with col:
+                assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
+                dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
+                index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
+
+                st.selectbox(
+                    "Assessment for " + diagnosis,
+                    options=assessment_options,
+                    index=index,
+                    key=f"select_{i}_{diagnosis}_lab",
+                    label_visibility="collapsed"
                 )
-        
-            # For each diagnosis, create a selectbox for the assessment
-            for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
-                with col:
-                    assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
-                    dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
-                    index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
-        
-                    st.selectbox(
-                        f"Assessment for {diagnosis}",
-                        options=assessment_options,
-                        index=index,
-                        key=f"select_{i}_{diagnosis}_lab",
-                        label_visibility="collapsed"
-                    )
 
     # Submit button for laboratory tests
     if st.button("Submit", key="labtests_submit_button"):
@@ -176,3 +174,4 @@ def display_laboratory_tests(db, document_id):
             st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
             st.success("Laboratory tests submitted successfully.")
             st.rerun()  # Rerun to update the app
+
