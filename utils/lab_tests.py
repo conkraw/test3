@@ -122,7 +122,7 @@ def display_laboratory_tests(db, document_id):
     #st.write("Dropdown Defaults:", st.session_state.dropdown_defaults)
 
     for i in range(5):
-        cols = st.columns(len(st.session_state.diagnoses) + 1)
+        cols = st.columns(len(st.session_state.diagnoses) + 0)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
             selected_lab_test = st.selectbox(
