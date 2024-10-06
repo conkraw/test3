@@ -125,20 +125,23 @@ def display_laboratory_tests(db, document_id):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
+            
+            # Ensure we refer to the right index for lab_rows
             selected_lab_test = st.selectbox(
-                f"Test for {st.session_state.diagnoses[i]}",
+                f"Test for {st.session_state.diagnoses[i] if i < len(st.session_state.diagnoses) else ''}",
                 options=[""] + lab_test_options,
-                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else -1),
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
+
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
                 assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
                 dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
                 index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
-
+    
                 st.selectbox(
                     "Assessment for " + diagnosis,
                     options=assessment_options,
