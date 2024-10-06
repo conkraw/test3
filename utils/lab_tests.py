@@ -121,12 +121,12 @@ def display_laboratory_tests(db, document_id):
     #st.write("Lab Rows:", st.session_state.lab_rows)
     #st.write("Dropdown Defaults:", st.session_state.dropdown_defaults)
 
+    # Display laboratory tests
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             lab_test_options = read_lab_tests_from_file()
             
-            # Ensure we refer to the right index for lab_rows
             selected_lab_test = st.selectbox(
                 f"Test for {st.session_state.diagnoses[i] if i < len(st.session_state.diagnoses) else ''}",
                 options=[""] + lab_test_options,
@@ -134,8 +134,7 @@ def display_laboratory_tests(db, document_id):
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
-
-
+    
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
                 assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
