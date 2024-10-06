@@ -21,8 +21,15 @@ def load_existing_data(db, document_id):
         data = user_data.to_dict()
         diagnoses_s2 = data.get("diagnoses_s2", [""] * 5)
         hxfeatures = data.get("hxfeatures", {})
-        return diagnoses_s2, hxfeatures
-    return [""] * 5, {}  # Default values if no data
+        
+        # Extract historical features according to the diagnosis order
+        historical_features = [""] * 5
+        for i, diagnosis in enumerate(diagnoses_s2):
+            if diagnosis in hxfeatures:
+                historical_features[i] = hxfeatures[diagnosis]
+        
+        return diagnoses_s2, historical_features
+    return [""] * 5, [""] * 5  # Default values if no data
 
 def main(db, document_id):
     # Initialize session state
@@ -108,14 +115,14 @@ def main(db, document_id):
         with cols[0]:
             st.markdown("Historical Features")
 
-        for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
+        for diagnosis, col, historical_feature in zip(st.session_state.diagnoses, cols[1:], st.session_state.historical_features):
             with col:
                 st.markdown(diagnosis)
 
         for i in range(5):
             cols = st.columns(len(st.session_state.diagnoses) + 1)
             with cols[0]:
-                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", key=f"hist_row_{i}", label_visibility="collapsed")
+                st.session_state.historical_features[i] = st.text_input(f"Feature {i + 1}:", value=st.session_state.historical_features[i], key=f"hist_row_{i}", label_visibility="collapsed")
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
@@ -154,4 +161,5 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
+
 
