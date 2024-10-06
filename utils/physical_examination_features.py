@@ -113,11 +113,12 @@ def display_physical_examination_features(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            # Pre-fill with existing values from session state
             st.session_state.physical_examination_features[i] = st.text_input(
                 f"Feature {i + 1}",
+                value=st.session_state.physical_examination_features[i],  # Prefill with existing value
                 key=f"phys_row_{i}",
-                label_visibility="collapsed",
-                value=st.session_state.physical_examination_features[i]  # Prefill with existing value
+                label_visibility="collapsed"
             )
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
@@ -164,4 +165,3 @@ def display_physical_examination_features(db, document_id):
             st.session_state.page = "Laboratory Tests"  # Change to the next page
             st.success("Physical examination features submitted successfully.")
             st.rerun()  # Rerun to update the app
-
