@@ -33,9 +33,6 @@ def load_laboratory_tests(db, document_id):
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
 
-        # Debugging: Print lab_tests to check structure
-        st.write("Loaded lab tests from Firebase:", lab_tests)
-
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
             for i, test in enumerate(tests):
@@ -44,12 +41,7 @@ def load_laboratory_tests(db, document_id):
                         lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
                     dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
 
-    # Debugging: Print lab_rows and dropdown_defaults to check values
-    st.write("Lab Rows:", lab_rows)
-    st.write("Dropdown Defaults:", dropdown_defaults)
-
     return lab_rows, dropdown_defaults
-
 
 def display_laboratory_tests(db, document_id):
     # Initialize session state
@@ -125,13 +117,15 @@ def display_laboratory_tests(db, document_id):
         with col:
             st.markdown(diagnosis)
 
+    # Display lab tests and assessments
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            lab_test_options = read_lab_tests_from_file()  # Get the available lab tests
             selected_lab_test = st.selectbox(
-                f"",
-                options=[""] + read_lab_tests_from_file(),  # Populate lab tests here
-                index=read_lab_tests_from_file().index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in read_lab_tests_from_file() else 0,
+                f"Test for {st.session_state.diagnoses[i]}",
+                options=[""] + lab_test_options,
+                index=(lab_test_options.index(st.session_state.lab_rows[i]) if st.session_state.lab_rows[i] in lab_test_options else 0),
                 key=f"lab_row_{i}",
                 label_visibility="collapsed",
             )
