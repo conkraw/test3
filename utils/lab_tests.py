@@ -35,11 +35,11 @@ def load_laboratory_tests(db, document_id):
 
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
-            for i, test in enumerate(tests):
-                if i < 5:  # Ensure we stay within bounds
-                    if test['laboratory_test']:
-                        lab_rows[i-1] = test['laboratory_test']  # Populate lab rows directly
-                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
+            for i in range(min(len(tests), 5)):  # Ensure we stay within bounds
+                test = tests[i]
+                if 'laboratory_test' in test and test['laboratory_test']:
+                    lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                dropdown_defaults[diagnosis][i] = test.get('assessment', "")  # Use get to avoid KeyError
 
     return lab_rows, dropdown_defaults
 
