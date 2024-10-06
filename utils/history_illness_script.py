@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.session_management import collect_session_data
+from utils.session_management import collect_session_data  #######NEED THIS
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -38,7 +38,7 @@ def main(db, document_id):
     if 'diagnoses_s2' not in st.session_state:  
         st.session_state.diagnoses_s2 = [""] * 5  
     if 'historical_features' not in st.session_state:
-        st.session_state.historical_features = load_historical_features(db, document_id)  # Load from Firebase
+        st.session_state.historical_features = load_historical_features(db, document_id)
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
@@ -50,7 +50,52 @@ def main(db, document_id):
     # Sidebar for diagnosis management
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
-        # ... (sidebar code remains unchanged)
+        
+        selected_diagnosis = st.selectbox(
+            "Select a diagnosis to move",
+            options=st.session_state.diagnoses,
+            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            key="move_diagnosis"
+        )
+
+        move_direction = st.radio("Adjust Priority:", options=["Higher Priority", "Lower Priority"], key="move_direction")
+
+        if st.button("Adjust Priority"):
+            idx = st.session_state.diagnoses.index(selected_diagnosis)
+            if move_direction == "Higher Priority" and idx > 0:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx - 1] = (
+                    st.session_state.diagnoses[idx - 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx - 1]  
+            elif move_direction == "Lower Priority" and idx < len(st.session_state.diagnoses) - 1:
+                st.session_state.diagnoses[idx], st.session_state.diagnoses[idx + 1] = (
+                    st.session_state.diagnoses[idx + 1], st.session_state.diagnoses[idx]
+                )
+                st.session_state.selected_moving_diagnosis = st.session_state.diagnoses[idx + 1]  
+
+            # Update diagnoses_s2 after moving
+            st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]
+
+        # Change a diagnosis section
+        st.subheader("Change a Diagnosis")
+        change_diagnosis = st.selectbox(
+            "Select a diagnosis to change",
+            options=st.session_state.diagnoses,
+            key="change_diagnosis"
+        )
+
+        new_diagnosis_search = st.text_input("Search for a new diagnosis", "")
+        if new_diagnosis_search:
+            dx_options = read_diagnoses_from_file()
+            new_filtered_options = [dx for dx in dx_options if new_diagnosis_search.lower() in dx.lower() and dx not in st.session_state.diagnoses]
+            if new_filtered_options:
+                st.write("**Available Options:**")
+                for option in new_filtered_options:
+                    if st.button(f"{option}", key=f"select_new_{option}"):
+                        index_to_change = st.session_state.diagnoses.index(change_diagnosis)
+                        st.session_state.diagnoses[index_to_change] = option
+                        st.session_state.diagnoses_s2 = [dx for dx in st.session_state.diagnoses if dx]
+                        st.rerun()  
 
     # Historical Features Page
     if st.session_state.current_page == "historical_features":
@@ -116,4 +161,5 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"
                 st.success("Historical features submitted successfully.")
                 st.rerun()
+
 
