@@ -106,10 +106,7 @@ def display_physical_examination_features(db, document_id):
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
                 dropdown_defaults = st.session_state.dropdown_defaults.get(diagnosis, [""])
-                if i < len(dropdown_defaults):
-                    index = ["", "Supports", "Does not support"].index(dropdown_defaults[i]) if dropdown_defaults[i] in ["", "Supports", "Does not support"] else 0
-                else:
-                    index = 0  # Default to the first option if out of bounds
+                index = ["", "Supports", "Does not support"].index(dropdown_defaults[i]) if i < len(dropdown_defaults) and dropdown_defaults[i] in ["", "Supports", "Does not support"] else 0
                 
                 st.selectbox(
                     "Assessment for " + diagnosis,
