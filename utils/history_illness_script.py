@@ -21,15 +21,19 @@ def load_existing_data(db, document_id):
         data = user_data.to_dict()
         diagnoses_s2 = data.get("diagnoses_s2", [""] * 5)
         hxfeatures = data.get("hxfeatures", {})
-        
-        # Extract historical features according to the diagnosis order
+
         historical_features = [""] * 5
+        hxfeature_dropdowns = [""] * 5
+        
+        # Populate historical features and hxfeatures dropdowns
         for i, diagnosis in enumerate(diagnoses_s2):
             if diagnosis in hxfeatures:
-                historical_features[i] = hxfeatures[diagnosis]
+                historical_features[i] = hxfeatures[diagnosis][0].get('historical_feature', "")
+                hxfeature_dropdowns[i] = hxfeatures[diagnosis][0].get('hxfeature', "")
         
-        return diagnoses_s2, historical_features
-    return [""] * 5, [""] * 5  # Default values if no data
+        return diagnoses_s2, historical_features, hxfeature_dropdowns
+    
+    return [""] * 5, [""] * 5, [""] * 5  # Default values if no data
 
 def main(db, document_id):
     # Initialize session state
@@ -38,7 +42,7 @@ def main(db, document_id):
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'diagnoses_s2' not in st.session_state:
-        st.session_state.diagnoses_s2, st.session_state.historical_features = load_existing_data(db, document_id)  
+        st.session_state.diagnoses_s2, st.session_state.historical_features, st.session_state.hxfeature_dropdowns = load_existing_data(db, document_id)
     if 'selected_buttons' not in st.session_state:
         st.session_state.selected_buttons = [False] * 5  
     if 'selected_moving_diagnosis' not in st.session_state:
@@ -115,7 +119,7 @@ def main(db, document_id):
         with cols[0]:
             st.markdown("Historical Features")
 
-        for diagnosis, col, historical_feature in zip(st.session_state.diagnoses, cols[1:], st.session_state.historical_features):
+        for diagnosis, col, historical_feature, hxfeature_dropdown in zip(st.session_state.diagnoses, cols[1:], st.session_state.historical_features, st.session_state.hxfeature_dropdowns):
             with col:
                 st.markdown(diagnosis)
 
@@ -126,9 +130,10 @@ def main(db, document_id):
 
             for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
                 with col:
-                    st.selectbox(
+                    st.session_state.hxfeature_dropdowns[i] = st.selectbox(
                         "hxfeatures for " + diagnosis,
                         options=["", "Supports", "Does not support"],
+                        index=["", "Supports", "Does not support"].index(hxfeature_dropdown),
                         key=f"select_{i}_{diagnosis}_hist",
                         label_visibility="collapsed"
                     )
@@ -161,5 +166,4 @@ def main(db, document_id):
                 st.session_state.page = "Physical Examination Features"  
                 st.success("Historical features submitted successfully.")
                 st.rerun()  
-
 
