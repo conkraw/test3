@@ -1,4 +1,28 @@
+import streamlit as st
+from utils.session_management import collect_session_data  #######NEED THIS
+from utils.firebase_operations import upload_to_firebase  
 
+# Function to read diagnoses from a file
+def read_diagnoses_from_file():
+    try:
+        with open('dx_list.txt', 'r') as file:
+            diagnoses = [line.strip() for line in file.readlines() if line.strip()]
+        return diagnoses
+    except Exception as e:
+        st.error(f"Error reading dx_list.txt: {e}")
+        return []
+
+# Function to read laboratory tests from a file
+def read_lab_tests_from_file():
+    try:
+        with open('labtests.txt', 'r') as file:
+            lab_tests = [line.strip() for line in file.readlines() if line.strip()]
+        return lab_tests
+    except Exception as e:
+        st.error(f"Error reading labtests.txt: {e}")
+        return []
+
+def load_laboratory_tests(db, document_id):
     """Load existing laboratory tests from Firebase."""
     collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
     user_data = db.collection(collection_name).document(document_id).get()
