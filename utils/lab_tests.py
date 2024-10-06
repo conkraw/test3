@@ -32,19 +32,14 @@ def load_laboratory_tests(db, document_id):
 
     if user_data.exists:
         lab_tests = user_data.to_dict().get('laboratory_tests', {})
-        
-        # Track filled slots
-        filled_slots = 0
 
         # Iterate through each diagnosis and populate the lab_rows and dropdown defaults
         for diagnosis, tests in lab_tests.items():
-            for test in tests:
-                if filled_slots < 5:  # Ensure we don't exceed the number of lab rows
-                    if 'laboratory_test' in test and test['laboratory_test']:
-                        lab_rows[filled_slots] = test['laboratory_test']  # Fill lab rows in order
-                        filled_slots += 1  # Move to the next slot
-                    # Populate dropdown defaults
-                    dropdown_defaults[diagnosis][filled_slots - 1] = test.get('assessment', "")  # Use get to avoid KeyError
+            for i in range(min(len(tests), 5)):  # Ensure we stay within bounds
+                test = tests[i]
+                if 'laboratory_test' in test and test['laboratory_test']:
+                    lab_rows[i] = test['laboratory_test']  # Populate lab rows directly
+                dropdown_defaults[diagnosis][i] = test.get('assessment', "")  # Use get to avoid KeyError
 
     return lab_rows, dropdown_defaults
 
