@@ -60,7 +60,7 @@ def display_radiological_tests(db, document_id):
     # Load existing radiological tests from Firebase
     st.session_state.rad_rows, st.session_state.dropdown_defaults = load_radiological_tests(db, document_id)
 
-    st.title("Radiological Tests App")
+    st.title("Radiological Tests")
     st.markdown("Of the following, please select up to 5 radiological tests that you would order and describe how they influence the differential diagnosis.")
 
     # Reorder section in the sidebar
