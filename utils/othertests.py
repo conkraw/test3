@@ -60,7 +60,7 @@ def display_other_tests(db, document_id):
     # Load existing other tests from Firebase
     st.session_state.other_rows, st.session_state.dropdown_defaults = load_other_tests(db, document_id)
 
-    st.title("Other Tests App")
+    st.title("Other Tests")
     st.markdown("Of the following, please select up to 5 other tests that you would order and describe how they influence the differential diagnosis.")
 
     # Reorder section in the sidebar
