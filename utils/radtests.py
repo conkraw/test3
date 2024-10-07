@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.session_management import collect_session_data  #######NEED THIS
+from utils.session_management import collect_session_data  # NEED THIS
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -35,6 +35,10 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
     dx_options = read_diagnoses_from_file()
     rad_tests = read_rad_tests_from_file()
     dx_options.insert(0, "")  
+
+    # Retain previous diagnoses if available
+    if 'diagnoses_s5' in st.session_state:
+        st.session_state.diagnoses = st.session_state.diagnoses_s5
 
     st.title("Radiological Tests App")
 
@@ -114,7 +118,7 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
                 )
 
     # Submit button for radiological tests
-    if st.button("Submit",key="radtests_submit_button"):
+    if st.button("Submit", key="radtests_submit_button"):
         assessments = {}
         at_least_one_selected = False
 
@@ -136,15 +140,14 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
             st.error("Please select at least one radiological test.")
         else:
             # Save diagnoses to Firebase
-            st.session_state.diagnoses_s4 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+            st.session_state.diagnoses_s5 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
                 'radiological_tests': assessments,  # Include radiological tests data
-                'diagnoses_s4': st.session_state.diagnoses_s4  # Include diagnoses_s4 in the entry
+                'diagnoses_s5': st.session_state.diagnoses_s5  # Include diagnoses_s5 in the entry
             }
 
             # Upload to Firebase
-            #upload_message = upload_to_firebase(db, 'your_collection_name', document_id, entry)
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.page = "Other Tests"  # Change to the Simple Success page
