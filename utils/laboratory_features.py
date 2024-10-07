@@ -50,7 +50,10 @@ def display_laboratory_features(db, document_id):
     dx_options.insert(0, "")  
 
     st.title("Laboratory Features Illness Script")
-    st.markdown("Please provide up to 5 laboratory features that influence the differential diagnosis.")
+    st.markdown("""
+            ### Laboratory Features
+            Please provide up to 5 historical features that influence the differential diagnosis.
+        """)
 
     # Reorder section in the sidebar
     with st.sidebar:
