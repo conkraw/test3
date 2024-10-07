@@ -120,10 +120,13 @@ def display_radiological_tests(db, document_id):
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            rad_test_options = read_rad_tests_from_file()
+            # Add the blank option at the end
+            rad_test_options.append("")  # Add blank option at the end
             selected_rad_test = st.selectbox(
                 f"Test for row {i + 1}",
-                options=[""] + read_rad_tests_from_file(),
-                index=(read_rad_tests_from_file().index(st.session_state.rad_rows[i]) if st.session_state.rad_rows[i] in read_rad_tests_from_file() else 0),
+                options=rad_test_options,
+                index=(rad_test_options.index(st.session_state.rad_rows[i]) if st.session_state.rad_rows[i] in rad_test_options else 0),
                 key=f"rad_row_{i}",
                 label_visibility="collapsed",
             )
