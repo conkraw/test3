@@ -162,7 +162,7 @@ def display_laboratory_features(db, document_id):
             # Upload to Firebase using the current diagnosis order
             upload_message = upload_to_firebase(db, document_id, entry)
             
-            st.session_state.page = "Treatments"  # Change to the next page
+            st.session_state.page = "Simple Success"  # Change to the next page
             st.success("Laboratory features submitted successfully.")
             st.rerun()  # Rerun to update the app
 
