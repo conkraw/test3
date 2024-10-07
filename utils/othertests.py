@@ -47,7 +47,7 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
-            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            index=(st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0),
             key="move_diagnosis"
         )
 
@@ -95,54 +95,60 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
             st.markdown(diagnosis)
 
     at_least_one_selected = False  # Track if any test has been selected
+    assessments = {}  # Store other tests and assessments
 
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
+            other_test_options = read_other_tests_from_file()
+            other_test_options.append("")  # Add blank option at the end
             selected_other_test = st.selectbox(
-                f"",
-                options=[""] + other_tests,
+                f"Test for row {i + 1}",
+                options=other_test_options,
+                index=(other_test_options.index(st.session_state.get(f"other_row_{i}", "")) if st.session_state.get(f"other_row_{i}", "") in other_test_options else 0),
                 key=f"other_row_{i}",
                 label_visibility="collapsed",
             )
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
-                assessment = st.selectbox(
+                assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
+                dropdown_value = st.session_state.get(f"select_{i}_{diagnosis}_other", "")
+                index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
+
+                st.selectbox(
                     "Assessment for " + diagnosis,
-                    options=["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"],
+                    options=assessment_options,
+                    index=index,
                     key=f"select_{i}_{diagnosis}_other",
                     label_visibility="collapsed"
                 )
+
                 if selected_other_test:  # Check if a test is selected
                     at_least_one_selected = True
 
+                if diagnosis not in assessments:
+                    assessments[diagnosis] = []
+                assessments[diagnosis].append({
+                    'other_test': selected_other_test,
+                    'assessment': dropdown_value
+                })
+
     # Submit button for other tests
-    if st.button("Submit",key="othertests_submit_button"):
-        assessments = {}
+    if st.button("Submit", key="othertests_submit_button"):
+        # Check if at least one other test is selected
         if not at_least_one_selected:
-            st.error("Please select at least one test.")
+            st.error("Please select at least one other test.")
         else:
-            for i in range(5):
-                for diagnosis in st.session_state.diagnoses:
-                    assessment = st.session_state[f"select_{i}_{diagnosis}_other"]
-                    if diagnosis not in assessments:
-                        assessments[diagnosis] = []
-                    assessments[diagnosis].append({
-                        'other_test': st.session_state[f"other_row_{i}"],
-                        'assessment': assessment
-                    })
-            
             # Save diagnoses to Firebase
-            st.session_state.diagnoses_s5 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+            st.session_state.diagnoses_s6 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
                 'other_tests': assessments,  # Include other tests data
-                'diagnoses_s5': st.session_state.diagnoses_s5  # Include diagnoses_s5 in the entry
+                'diagnoses_s6': st.session_state.diagnoses_s6  # Include diagnoses_s6 in the entry
             }
 
             # Upload to Firebase
-            #upload_message = upload_to_firebase(db, 'your_collection_name', document_id, entry)
             upload_message = upload_to_firebase(db, document_id, entry)
             
             st.session_state.page = "Results"  # Change to the Simple Success page
