@@ -22,6 +22,27 @@ def read_rad_tests_from_file():
         st.error(f"Error reading radtests.txt: {e}")
         return []
 
+def load_radiological_tests(db, document_id):
+    """Load existing radiological tests from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    
+    rad_rows = [""] * 5  # Default to empty for 5 tests
+    dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
+
+    if user_data.exists:
+        rad_tests = user_data.to_dict().get('radiological_tests', {})
+
+        # Iterate through each diagnosis and populate the rad_rows and dropdown defaults
+        for diagnosis, tests in rad_tests.items():
+            for i, test in enumerate(tests):
+                if i < 5:  # Ensure we stay within bounds
+                    if test['radiological_test']:
+                        rad_rows[i] = test['radiological_test']  # Populate rad rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
+
+    return rad_rows, dropdown_defaults
+
 def display_radiological_tests(db, document_id):  # Updated to include db and document_id
     # Initialize session state
     if 'current_page' not in st.session_state:
@@ -39,6 +60,9 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
     # Retain previous diagnoses if available
     if 'diagnoses_s5' in st.session_state:
         st.session_state.diagnoses = st.session_state.diagnoses_s5
+
+    # Load existing radiological tests from Firebase
+    st.session_state.rad_rows, st.session_state.dropdown_defaults = load_radiological_tests(db, document_id)
 
     st.title("Radiological Tests App")
 
@@ -102,8 +126,9 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
             selected_rad_test = st.selectbox(
-                f"",
+                f"Test for row {i + 1}",
                 options=[""] + rad_tests,
+                index=(rad_tests.index(st.session_state.rad_rows[i]) if st.session_state.rad_rows[i] in rad_tests else 0),
                 key=f"rad_row_{i}",
                 label_visibility="collapsed",
             )
@@ -113,6 +138,7 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
                 st.selectbox(
                     "Assessment for " + diagnosis,
                     options=["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"],
+                    index=dropdown_defaults[diagnosis].index(st.session_state.dropdown_defaults[diagnosis][i]) if st.session_state.dropdown_defaults[diagnosis][i] in dropdown_defaults[diagnosis] else 0,
                     key=f"select_{i}_{diagnosis}_rad",
                     label_visibility="collapsed"
                 )
@@ -153,4 +179,5 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
             st.session_state.page = "Other Tests"  # Change to the Simple Success page
             st.success("Radiological tests submitted successfully.")
             st.rerun()  # Rerun to update the app
+
 
