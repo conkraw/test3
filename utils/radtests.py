@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.session_management import collect_session_data  # NEED THIS
+from utils.session_management import collect_session_data  # Ensure this is included
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -43,30 +43,25 @@ def load_radiological_tests(db, document_id):
 
     return rad_rows, dropdown_defaults
 
-def display_radiological_tests(db, document_id):  # Updated to include db and document_id
+def display_radiological_tests(db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = "radiological_tests"
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
-        st.session_state.selected_moving_diagnosis = ""  
+        st.session_state.selected_moving_diagnosis = ""
 
     # Load diagnoses and radiological tests from files
     dx_options = read_diagnoses_from_file()
     rad_tests = read_rad_tests_from_file()
-    dx_options.insert(0, "")  
-
-    # Retain previous diagnoses if available
-    if 'diagnoses_s5' in st.session_state:
-        st.session_state.diagnoses = st.session_state.diagnoses_s5
+    dx_options.insert(0, "")
 
     # Load existing radiological tests from Firebase
     st.session_state.rad_rows, st.session_state.dropdown_defaults = load_radiological_tests(db, document_id)
 
     st.title("Radiological Tests App")
-
-    st.markdown("""Of the following, please select up to 5 radiological tests that you would order and describe how they influence the differential diagnosis.""")
+    st.markdown("Of the following, please select up to 5 radiological tests that you would order and describe how they influence the differential diagnosis.")
 
     # Reorder section in the sidebar
     with st.sidebar:
@@ -75,7 +70,7 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
         selected_diagnosis = st.selectbox(
             "Select a diagnosis to move",
             options=st.session_state.diagnoses,
-            index=st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0,
+            index=(st.session_state.diagnoses.index(st.session_state.selected_moving_diagnosis) if st.session_state.selected_moving_diagnosis in st.session_state.diagnoses else 0),
             key="move_diagnosis"
         )
 
@@ -127,49 +122,48 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
         with cols[0]:
             selected_rad_test = st.selectbox(
                 f"Test for row {i + 1}",
-                options=[""] + rad_tests,
-                index=(rad_tests.index(st.session_state.rad_rows[i]) if st.session_state.rad_rows[i] in rad_tests else 0),
+                options=[""] + read_rad_tests_from_file(),
+                index=(read_rad_tests_from_file().index(st.session_state.rad_rows[i]) if st.session_state.rad_rows[i] in read_rad_tests_from_file() else 0),
                 key=f"rad_row_{i}",
                 label_visibility="collapsed",
             )
 
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
+                assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
+                dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
+                index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
+
                 st.selectbox(
                     "Assessment for " + diagnosis,
-                    options=["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"],
-                    index=dropdown_defaults[diagnosis].index(st.session_state.dropdown_defaults[diagnosis][i]) if st.session_state.dropdown_defaults[diagnosis][i] in dropdown_defaults[diagnosis] else 0,
+                    options=assessment_options,
+                    index=index,
                     key=f"select_{i}_{diagnosis}_rad",
                     label_visibility="collapsed"
                 )
 
     # Submit button for radiological tests
     if st.button("Submit", key="radtests_submit_button"):
-        assessments = {}
-        at_least_one_selected = False
-
-        for i in range(5):
-            selected_rad_test = st.session_state[f"rad_row_{i}"]
-            for diagnosis in st.session_state.diagnoses:
-                assessment = st.session_state[f"select_{i}_{diagnosis}_rad"]
-                if selected_rad_test:  # Check if a radiological test is selected
-                    at_least_one_selected = True
-                if diagnosis not in assessments:
-                    assessments[diagnosis] = []
-                assessments[diagnosis].append({
-                    'radiological_test': selected_rad_test,
-                    'assessment': assessment
-                })
-
+        rad_tests_data = {}  # Store rad tests and assessments
         # Check if at least one radiological test is selected
-        if not at_least_one_selected:
+        if not any(st.session_state[f"rad_row_{i}"] for i in range(5)):
             st.error("Please select at least one radiological test.")
         else:
-            # Save diagnoses to Firebase
+            for i in range(5):
+                for diagnosis in st.session_state.diagnoses:
+                    assessment = st.session_state[f"select_{i}_{diagnosis}_rad"]
+                    if diagnosis not in rad_tests_data:
+                        rad_tests_data[diagnosis] = []
+                    rad_tests_data[diagnosis].append({
+                        'radiological_test': st.session_state[f"rad_row_{i}"],
+                        'assessment': assessment
+                    })
+
+            # Set diagnoses_s5 to the current state of diagnoses
             st.session_state.diagnoses_s5 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
-                'radiological_tests': assessments,  # Include radiological tests data
+                'radiological_tests': rad_tests_data,  # Include radiological tests data
                 'diagnoses_s5': st.session_state.diagnoses_s5  # Include diagnoses_s5 in the entry
             }
 
@@ -179,5 +173,6 @@ def display_radiological_tests(db, document_id):  # Updated to include db and do
             st.session_state.page = "Other Tests"  # Change to the Simple Success page
             st.success("Radiological tests submitted successfully.")
             st.rerun()  # Rerun to update the app
+
 
 
