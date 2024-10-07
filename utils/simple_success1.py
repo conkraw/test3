@@ -1,6 +1,6 @@
 import streamlit as st
 
-def simplesuccess1():
+def display_simple_success1():
     st.title("User Results Summary")
 
     # Input for unique code
