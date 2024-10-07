@@ -51,8 +51,11 @@ def display_physical_examination_features(db, document_id):
     dx_options.insert(0, "")  
 
     st.title("Physical Examination Illness Script")
-    st.markdown("Please provide up to 5 physical examination features that influence the differential diagnosis.")
-
+    st.markdown("""
+            ### Physical Examination Features
+            Please provide up to 5 physical examination features that influence the differential diagnosis.
+        """)
+    
     # Reorder section in the sidebar
     with st.sidebar:
         st.subheader("Reorder Diagnoses")
