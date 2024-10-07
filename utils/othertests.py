@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.session_management import collect_session_data  #######NEED THIS
+from utils.session_management import collect_session_data  # Ensure this is included
 from utils.firebase_operations import upload_to_firebase  
 
 # Function to read diagnoses from a file
@@ -22,23 +22,46 @@ def read_other_tests_from_file():
         st.error(f"Error reading other_tests.txt: {e}")
         return []
 
-def display_other_tests(db, document_id):  # Updated to include db and document_id
+def load_other_tests(db, document_id):
+    """Load existing other tests from Firebase."""
+    collection_name = st.secrets["FIREBASE_COLLECTION_NAME"]
+    user_data = db.collection(collection_name).document(document_id).get()
+    
+    other_rows = [""] * 5  # Default to empty for 5 tests
+    dropdown_defaults = {dx: [""] * 5 for dx in st.session_state.diagnoses}  # Prepare default dropdowns
+
+    if user_data.exists:
+        other_tests = user_data.to_dict().get('other_tests', {})
+
+        # Iterate through each diagnosis and populate the other_rows and dropdown defaults
+        for diagnosis, tests in other_tests.items():
+            for i, test in enumerate(tests):
+                if i < 5:  # Ensure we stay within bounds
+                    if test['other_test']:
+                        other_rows[i] = test['other_test']  # Populate other rows directly
+                    dropdown_defaults[diagnosis][i] = test['assessment']  # Set dropdown default values
+
+    return other_rows, dropdown_defaults
+
+def display_other_tests(db, document_id):
     # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = "other_tests"
     if 'diagnoses' not in st.session_state:
         st.session_state.diagnoses = [""] * 5
     if 'selected_moving_diagnosis' not in st.session_state:
-        st.session_state.selected_moving_diagnosis = ""  
+        st.session_state.selected_moving_diagnosis = ""
 
     # Load diagnoses and other tests from files
     dx_options = read_diagnoses_from_file()
     other_tests = read_other_tests_from_file()
-    dx_options.insert(0, "")  
+    dx_options.insert(0, "")
 
-    st.title("Other Tests")
+    # Load existing other tests from Firebase
+    st.session_state.other_rows, st.session_state.dropdown_defaults = load_other_tests(db, document_id)
 
-    st.markdown("""Of the following, please select up to 5 other tests that you would order and describe how they influence the differential diagnosis.""")
+    st.title("Other Tests App")
+    st.markdown("Of the following, please select up to 5 other tests that you would order and describe how they influence the differential diagnosis.")
 
     # Reorder section in the sidebar
     with st.sidebar:
@@ -94,9 +117,6 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
         with col:
             st.markdown(diagnosis)
 
-    at_least_one_selected = False  # Track if any test has been selected
-    assessments = {}  # Store other tests and assessments
-
     for i in range(5):
         cols = st.columns(len(st.session_state.diagnoses) + 1)
         with cols[0]:
@@ -105,7 +125,7 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
             selected_other_test = st.selectbox(
                 f"Test for row {i + 1}",
                 options=other_test_options,
-                index=(other_test_options.index(st.session_state.get(f"other_row_{i}", "")) if st.session_state.get(f"other_row_{i}", "") in other_test_options else 0),
+                index=(other_test_options.index(st.session_state.other_rows[i]) if st.session_state.other_rows[i] in other_test_options else 0),
                 key=f"other_row_{i}",
                 label_visibility="collapsed",
             )
@@ -113,7 +133,7 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
         for diagnosis, col in zip(st.session_state.diagnoses, cols[1:]):
             with col:
                 assessment_options = ["", "Necessary", "Neither More Nor Less Useful", "Unnecessary"]
-                dropdown_value = st.session_state.get(f"select_{i}_{diagnosis}_other", "")
+                dropdown_value = st.session_state.dropdown_defaults.get(diagnosis, [""] * 5)[i]
                 index = assessment_options.index(dropdown_value) if dropdown_value in assessment_options else 0
 
                 st.selectbox(
@@ -124,27 +144,28 @@ def display_other_tests(db, document_id):  # Updated to include db and document_
                     label_visibility="collapsed"
                 )
 
-                if selected_other_test:  # Check if a test is selected
-                    at_least_one_selected = True
-
-                if diagnosis not in assessments:
-                    assessments[diagnosis] = []
-                assessments[diagnosis].append({
-                    'other_test': selected_other_test,
-                    'assessment': dropdown_value
-                })
-
     # Submit button for other tests
     if st.button("Submit", key="othertests_submit_button"):
+        other_tests_data = {}  # Store other tests and assessments
         # Check if at least one other test is selected
-        if not at_least_one_selected:
+        if not any(st.session_state[f"other_row_{i}"] for i in range(5)):
             st.error("Please select at least one other test.")
         else:
-            # Save diagnoses to Firebase
+            for i in range(5):
+                for diagnosis in st.session_state.diagnoses:
+                    assessment = st.session_state[f"select_{i}_{diagnosis}_other"]
+                    if diagnosis not in other_tests_data:
+                        other_tests_data[diagnosis] = []
+                    other_tests_data[diagnosis].append({
+                        'other_test': st.session_state[f"other_row_{i}"],
+                        'assessment': assessment
+                    })
+
+            # Set diagnoses_s6 to the current state of diagnoses
             st.session_state.diagnoses_s6 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
 
             entry = {
-                'other_tests': assessments,  # Include other tests data
+                'other_tests': other_tests_data,  # Include other tests data
                 'diagnoses_s6': st.session_state.diagnoses_s6  # Include diagnoses_s6 in the entry
             }
 
