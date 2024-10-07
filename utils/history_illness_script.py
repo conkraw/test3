@@ -48,7 +48,7 @@ def main(db, document_id):
         st.session_state.selected_moving_diagnosis = ""  
 
     # Title of the app
-    st.title("Historical Features App")
+    st.title("Historical Features Illness Script")
 
     # Historical Features Page
     if st.session_state.current_page == "historical_features":
