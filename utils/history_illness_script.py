@@ -53,7 +53,7 @@ def main(db, document_id):
     # Historical Features Page
     if st.session_state.current_page == "historical_features":
         st.markdown("""
-            ### HISTORICAL FEATURES
+            ### Historical Features
             Please provide up to 5 historical features that influence the differential diagnosis.
         """)
 
