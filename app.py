@@ -95,8 +95,8 @@ def main():
         display_results_image()
     elif st.session_state.page == "Laboratory Features":
         display_laboratory_features(db,st.session_state.document_id)
-    elif st.session_state.page == "Treatments":
-        display_treatments(db,st.session_state.document_id)
+    #elif st.session_state.page == "Treatments":
+    #    display_treatments(db,st.session_state.document_id)
     elif st.session_state.page == "Simple Success":
         display_simple_success1()
 
