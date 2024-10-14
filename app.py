@@ -13,7 +13,7 @@ from utils.focused_physical_examination import display_focused_physical_examinat
 from utils.physical_examination import main as display_physical_examination
 from utils.history_illness_script import main as history_illness_script
 from utils.simple_success import display_simple_success
-from utils.simple_success1 import display_simple_success1
+#from utils.simple_success1 import display_simple_success1
 from utils.physical_examination_features import display_physical_examination_features
 from utils.lab_tests import display_laboratory_tests
 from utils.radtests import display_radiological_tests
@@ -97,8 +97,8 @@ def main():
         display_laboratory_features(db,st.session_state.document_id)
     #elif st.session_state.page == "Treatments":
     #    display_treatments(db,st.session_state.document_id)
-    elif st.session_state.page == "Simple Success":
-        display_simple_success1()
+    #elif st.session_state.page == "Simple Success":
+    #    display_simple_success1()
 
 if __name__ == "__main__":
     main()
