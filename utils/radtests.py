@@ -148,34 +148,49 @@ def display_radiological_tests(db, document_id):
     # Submit button for radiological tests
     if st.button("Submit", key="radtests_submit_button"):
         rad_tests_data = {}  # Store rad tests and assessments
+        selected_rad_tests = []  # Track selected rad tests for uniqueness check
+    
         # Check if at least one radiological test is selected
         if not any(st.session_state[f"rad_row_{i}"] for i in range(5)):
             st.error("Please select at least one radiological test.")
         else:
+            duplicate_found = False  # Flag to track duplicates
+    
             for i in range(5):
+                rad_test = st.session_state[f"rad_row_{i}"]
+                if rad_test:  # Only check if a test is selected
+                    if rad_test in selected_rad_tests:
+                        duplicate_found = True  # Duplicate detected
+                        break
+                    selected_rad_tests.append(rad_test)  # Add to selected tests
+    
                 for diagnosis in st.session_state.diagnoses:
                     assessment = st.session_state[f"select_{i}_{diagnosis}_rad"]
                     if diagnosis not in rad_tests_data:
                         rad_tests_data[diagnosis] = []
                     rad_tests_data[diagnosis].append({
-                        'radiological_test': st.session_state[f"rad_row_{i}"],
+                        'radiological_test': rad_test,
                         'assessment': assessment
                     })
+    
+            if duplicate_found:
+                st.error("Please select unique radiological tests. Duplicate selections are not allowed.")
+            else:
+                # Set diagnoses_s5 to the current state of diagnoses
+                st.session_state.diagnoses_s5 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+    
+                entry = {
+                    'radiological_tests': rad_tests_data,  # Include radiological tests data
+                    'diagnoses_s5': st.session_state.diagnoses_s5  # Include diagnoses_s5 in the entry
+                }
+    
+                # Upload to Firebase
+                upload_message = upload_to_firebase(db, document_id, entry)
+                
+                st.session_state.page = "Other Tests"  # Change to the Simple Success page
+                st.success("Radiological tests submitted successfully.")
+                st.rerun()  # Rerun to update the app
 
-            # Set diagnoses_s5 to the current state of diagnoses
-            st.session_state.diagnoses_s5 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
-
-            entry = {
-                'radiological_tests': rad_tests_data,  # Include radiological tests data
-                'diagnoses_s5': st.session_state.diagnoses_s5  # Include diagnoses_s5 in the entry
-            }
-
-            # Upload to Firebase
-            upload_message = upload_to_firebase(db, document_id, entry)
-            
-            st.session_state.page = "Other Tests"  # Change to the Simple Success page
-            st.success("Radiological tests submitted successfully.")
-            st.rerun()  # Rerun to update the app
 
 
 
