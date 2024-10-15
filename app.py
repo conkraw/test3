@@ -14,6 +14,7 @@ from utils.physical_examination import main as display_physical_examination
 from utils.history_illness_script import main as history_illness_script
 #from utils.simple_success import display_simple_success
 from utils.simple_success1 import display_simple_success1
+from utils.simple_success1 import main as dsp
 from utils.physical_examination_features import display_physical_examination_features
 from utils.lab_tests import display_laboratory_tests
 from utils.radtests import display_radiological_tests
