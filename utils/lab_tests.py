@@ -145,35 +145,51 @@ def display_laboratory_tests(db, document_id):
                     label_visibility="collapsed"
                 )
 
-    # Submit button for laboratory tests
+        # Submit button for laboratory tests
+    
     if st.button("Submit", key="labtests_submit_button"):
         lab_tests_data = {}  # Store lab tests and assessments
+        selected_lab_tests = []  # Track selected lab tests for uniqueness check
+    
         # Check if at least one laboratory test is selected
         if not any(st.session_state[f"lab_row_{i}"] for i in range(5)):
             st.error("Please select at least one laboratory test.")
         else:
+            duplicate_found = False  # Flag to track duplicates
+    
             for i in range(5):
+                lab_test = st.session_state[f"lab_row_{i}"]
+                if lab_test:  # Only check if a test is selected
+                    if lab_test in selected_lab_tests:
+                        duplicate_found = True  # Duplicate detected
+                        break
+                    selected_lab_tests.append(lab_test)  # Add to selected tests
+    
                 for diagnosis in st.session_state.diagnoses:
                     assessment = st.session_state[f"select_{i}_{diagnosis}_lab"]
                     if diagnosis not in lab_tests_data:
                         lab_tests_data[diagnosis] = []
                     lab_tests_data[diagnosis].append({
-                        'laboratory_test': st.session_state[f"lab_row_{i}"],
+                        'laboratory_test': lab_test,
                         'assessment': assessment
                     })
-
-            # Set diagnoses_s4 to the current state of diagnoses
-            st.session_state.diagnoses_s4 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
-
-            entry = {
-                'laboratory_tests': lab_tests_data,  # Include laboratory tests data
-                'diagnoses_s4': st.session_state.diagnoses_s4  # Include diagnoses_s4 in the entry
-            }
-
-            # Upload to Firebase using the current diagnosis order
-            upload_message = upload_to_firebase(db, document_id, entry)
-            
-            st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
-            st.success("Laboratory tests submitted successfully.")
-            st.rerun()  # Rerun to update the app
+    
+            if duplicate_found:
+                st.error("Please select unique laboratory tests. Duplicate selections are not allowed.")
+            else:
+                # Set diagnoses_s4 to the current state of diagnoses
+                st.session_state.diagnoses_s4 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+    
+                entry = {
+                    'laboratory_tests': lab_tests_data,  # Include laboratory tests data
+                    'diagnoses_s4': st.session_state.diagnoses_s4  # Include diagnoses_s4 in the entry
+                }
+    
+                # Upload to Firebase using the current diagnosis order
+                upload_message = upload_to_firebase(db, document_id, entry)
+                
+                st.session_state.page = "Radiology Tests"  # Change to the Simple Success page
+                st.success("Laboratory tests submitted successfully.")
+                st.rerun()  # Rerun to update the app
+    
 
