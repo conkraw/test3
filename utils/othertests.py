@@ -147,31 +147,46 @@ def display_other_tests(db, document_id):
     # Submit button for other tests
     if st.button("Submit", key="othertests_submit_button"):
         other_tests_data = {}  # Store other tests and assessments
+        selected_other_tests = []  # Track selected other tests for uniqueness check
+    
         # Check if at least one other test is selected
         if not any(st.session_state[f"other_row_{i}"] for i in range(5)):
             st.error("Please select at least one other test.")
         else:
+            duplicate_found = False  # Flag to track duplicates
+    
             for i in range(5):
+                other_test = st.session_state[f"other_row_{i}"]
+                if other_test:  # Only check if a test is selected
+                    if other_test in selected_other_tests:
+                        duplicate_found = True  # Duplicate detected
+                        break
+                    selected_other_tests.append(other_test)  # Add to selected tests
+    
                 for diagnosis in st.session_state.diagnoses:
                     assessment = st.session_state[f"select_{i}_{diagnosis}_other"]
                     if diagnosis not in other_tests_data:
                         other_tests_data[diagnosis] = []
                     other_tests_data[diagnosis].append({
-                        'other_test': st.session_state[f"other_row_{i}"],
+                        'other_test': other_test,
                         'assessment': assessment
                     })
+    
+            if duplicate_found:
+                st.error("Please select unique other tests. Duplicate selections are not allowed.")
+            else:
+                # Set diagnoses_s6 to the current state of diagnoses
+                st.session_state.diagnoses_s6 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
+    
+                entry = {
+                    'other_tests': other_tests_data,  # Include other tests data
+                    'diagnoses_s6': st.session_state.diagnoses_s6  # Include diagnoses_s6 in the entry
+                }
+    
+                # Upload to Firebase
+                upload_message = upload_to_firebase(db, document_id, entry)
+                
+                st.session_state.page = "Results"  # Change to the Simple Success page
+                st.success("Other tests submitted successfully.")
+                st.rerun()  # Rerun to update the app
 
-            # Set diagnoses_s6 to the current state of diagnoses
-            st.session_state.diagnoses_s6 = [dx for dx in st.session_state.diagnoses if dx]  # Update with current order
-
-            entry = {
-                'other_tests': other_tests_data,  # Include other tests data
-                'diagnoses_s6': st.session_state.diagnoses_s6  # Include diagnoses_s6 in the entry
-            }
-
-            # Upload to Firebase
-            upload_message = upload_to_firebase(db, document_id, entry)
-            
-            st.session_state.page = "Results"  # Change to the Simple Success page
-            st.success("Other tests submitted successfully.")
-            st.rerun()  # Rerun to update the app
