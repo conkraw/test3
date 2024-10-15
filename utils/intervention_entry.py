@@ -34,9 +34,15 @@ def main(db, document_id):
     st.header("Select any interventions that you would currently perform.")
     selected_interventions = st.multiselect("Interventions", options=intervention_options, default=existing_interventions)
 
+    # Define the acute intervention option
+    no_acute_intervention = "No Acute Interventions Are Currently Required"
+
     # Button to save to Firebase
     if st.button("Save Intervention", key="interventions_submit_button"):
-        if selected_interventions:
+        # Check for the specific condition
+        if no_acute_intervention in selected_interventions and len(selected_interventions) > 1:
+            st.error(f"You cannot select '{no_acute_intervention}' with other interventions. Please select only one or none.")
+        elif selected_interventions:
             # Create entry with the interventions data
             entry = {
                 "interventions": selected_interventions
