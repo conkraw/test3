@@ -98,6 +98,7 @@ def main():
         display_laboratory_features(db,st.session_state.document_id) 
     elif st.session_state.page == "Simple Success":
         display_simple_success1()
+        dsp()
 
 if __name__ == "__main__":
     main()
