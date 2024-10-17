@@ -1,0 +1,14 @@
+Q: What are your symptoms?
+A: Belly pain
+
+Q: How long have you had these symptoms?
+A: About three days.
+
+Q: Have you had any fever?
+A: Yes, I had a mild fever.
+
+Q: Are you experiencing any coughing?
+A: Yes, I have a dry cough.
+
+Q: Do you have any difficulty breathing?
+A: No, my breathing is normal.
