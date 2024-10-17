@@ -33,16 +33,11 @@ def get_chatgpt_response(user_input):
 
     if user_input_lower in croup_info:
         answer = croup_info[user_input_lower]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": user_input},
-                {"role": "assistant", "content": f"The answer is: {answer}"}
-            ]
-        )
-        return response['choices'][0]['message']['content']
+        # Return the answer directly without calling the API
+        return answer
     else:
         return random.choice(alternative_responses)
+
 
 def load_existing_data(db, document_id):
     """Load existing questions and responses from Firebase."""
